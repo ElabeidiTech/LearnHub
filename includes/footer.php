@@ -53,9 +53,9 @@
     </footer>
 
     <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" defer></script>
     
     <!--JS -->
-    <script src="<?= SITE_URL ?>/assets/js/main.js?v=<?= time() ?>"></script>
+    <script src="<?= SITE_URL ?>/assets/js/main.js" defer></script>
 </body>
 </html>

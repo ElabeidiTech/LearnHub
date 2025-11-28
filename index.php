@@ -41,8 +41,8 @@ $totalTeachers = 320;
                 </div>
             </div>
             <div class="col-lg-6 text-center animate__animated animate__fadeInRight">
-                <img src="https://illustrations.popsy.co/amber/student-going-to-school.svg" 
-                    alt="Learning Management" class="img-fluid" style="max-height: 400px;">
+                <img src="<?= SITE_URL ?>/assets/images/Learning Management/student-going-to-school.svg" 
+                    alt="Learning Management" class="img-fluid" style="max-height: 400px;" loading="eager" fetchpriority="high">
             </div>
         </div>
     </div>
@@ -126,47 +126,47 @@ $totalTeachers = 320;
         <div class="university-logos-track">
             <!-- First set of logos -->
             <div class="university-logo-item">
-                <img src="<?= SITE_URL ?>/assets/images/universities/university_of_toronto.png" alt="University of Toronto">
+                <img src="<?= SITE_URL ?>/assets/images/universities/university_of_toronto.png" alt="University of Toronto" loading="lazy">
             </div>
             <div class="university-logo-item">
-                <img src="<?= SITE_URL ?>/assets/images/universities/McGill_University.png" alt="McGill University">
+                <img src="<?= SITE_URL ?>/assets/images/universities/McGill_University.png" alt="McGill University" loading="lazy">
             </div>
             <div class="university-logo-item">
-                <img src="<?= SITE_URL ?>/assets/images/universities/University_of_British_Columbia.png" alt="UBC">
+                <img src="<?= SITE_URL ?>/assets/images/universities/University_of_British_Columbia.png" alt="UBC" loading="lazy">
             </div>
             <div class="university-logo-item">
-                <img src="<?= SITE_URL ?>/assets/images/universities/University_of_Alberta.png" alt="University of Alberta">
+                <img src="<?= SITE_URL ?>/assets/images/universities/University_of_Alberta.png" alt="University of Alberta" loading="lazy">
             </div>
             <div class="university-logo-item">
-                <img src="<?= SITE_URL ?>/assets/images/universities/McMaster_University.png" alt="McMaster University">
+                <img src="<?= SITE_URL ?>/assets/images/universities/McMaster_University.png" alt="McMaster University" loading="lazy">
             </div>
             <div class="university-logo-item">
-                <img src="<?= SITE_URL ?>/assets/images/universities/University_of_Waterloo.png" alt="University of Waterloo">
+                <img src="<?= SITE_URL ?>/assets/images/universities/University_of_Waterloo.png" alt="University of Waterloo" loading="lazy">
             </div>
             <div class="university-logo-item">
-                <img src="<?= SITE_URL ?>/assets/images/universities/Ontario Tech University.png" alt="Ontario Tech University">
+                <img src="<?= SITE_URL ?>/assets/images/universities/Ontario Tech University.png" alt="Ontario Tech University" loading="lazy">
             </div>
             <!-- Duplicate set for seamless loop -->
             <div class="university-logo-item">
-                <img src="<?= SITE_URL ?>/assets/images/universities/university_of_toronto.png" alt="University of Toronto">
+                <img src="<?= SITE_URL ?>/assets/images/universities/university_of_toronto.png" alt="University of Toronto" loading="lazy">
             </div>
             <div class="university-logo-item">
-                <img src="<?= SITE_URL ?>/assets/images/universities/McGill_University.png" alt="McGill University">
+                <img src="<?= SITE_URL ?>/assets/images/universities/McGill_University.png" alt="McGill University" loading="lazy">
             </div>
             <div class="university-logo-item">
-                <img src="<?= SITE_URL ?>/assets/images/universities/University_of_British_Columbia.png" alt="UBC">
+                <img src="<?= SITE_URL ?>/assets/images/universities/University_of_British_Columbia.png" alt="UBC" loading="lazy">
             </div>
             <div class="university-logo-item">
-                <img src="<?= SITE_URL ?>/assets/images/universities/University_of_Alberta.png" alt="University of Alberta">
+                <img src="<?= SITE_URL ?>/assets/images/universities/University_of_Alberta.png" alt="University of Alberta" loading="lazy">
             </div>
             <div class="university-logo-item">
-                <img src="<?= SITE_URL ?>/assets/images/universities/McMaster_University.png" alt="McMaster University">
+                <img src="<?= SITE_URL ?>/assets/images/universities/McMaster_University.png" alt="McMaster University" loading="lazy">
             </div>
             <div class="university-logo-item">
-                <img src="<?= SITE_URL ?>/assets/images/universities/University_of_Waterloo.png" alt="University of Waterloo">
+                <img src="<?= SITE_URL ?>/assets/images/universities/University_of_Waterloo.png" alt="University of Waterloo" loading="lazy">
             </div>
             <div class="university-logo-item">
-                <img src="<?= SITE_URL ?>/assets/images/universities/Ontario Tech University.png" alt="Ontario Tech University">
+                <img src="<?= SITE_URL ?>/assets/images/universities/Ontario Tech University.png" alt="Ontario Tech University" loading="lazy">
             </div>
         </div>
     </div>

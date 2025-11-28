@@ -9,6 +9,17 @@ $currentUser = getCurrentUser();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= isset($pageTitle) ? $pageTitle : SITE_NAME ?></title>
     
+    <!-- DNS Prefetch for faster resource loading -->
+    <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+    <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
+    <link rel="dns-prefetch" href="https://fonts.googleapis.com">
+    <link rel="dns-prefetch" href="https://fonts.gstatic.com">
+    
+    <!-- Preconnect to critical resources -->
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     
@@ -18,11 +29,16 @@ $currentUser = getCurrentUser();
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
-    <!-- Animate.css -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <!-- Critical CSS for faster initial render -->
+    <style>
+        body{font-family:'Inter',sans-serif;background-color:#f8fafc;color:#334155;line-height:1.6;margin:0}
+        .hero-section{background:linear-gradient(135deg,#4f46e5 0%,#06b6d4 100%);padding:80px 0;min-height:500px}
+        .navbar{padding:1rem 0;background:#fff!important}
+        .stats-section{background:linear-gradient(135deg,#1f2937 0%,#111827 100%);padding:60px 0}
+    </style>
     
-    <!--CSS -->
-    <link rel="stylesheet" href="<?= SITE_URL ?>/assets/css/style.css?v=<?= time() ?>">
+    <!-- CSS -->
+    <link rel="stylesheet" href="<?= SITE_URL ?>/assets/css/style.css">
 </head>
 <body>
     <!-- Navigation -->
