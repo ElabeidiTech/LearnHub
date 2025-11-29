@@ -6,6 +6,8 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initialize components that are actually used
     initFormValidation();
     initDateTime();
+    initCounterAnimation();
+    cloneUniversityLogos();
 });
 
 /**
@@ -122,3 +124,65 @@ function updateDateTime() {
         initDateTime();
     }
 })();
+
+/**
+ * Animated Counter for Stats
+ */
+function initCounterAnimation() {
+    const counters = document.querySelectorAll('.stat-number');
+    
+    const observerOptions = {
+        threshold: 0.5,
+        rootMargin: '0px'
+    };
+    
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting && !entry.target.classList.contains('counted')) {
+                animateCounter(entry.target);
+                entry.target.classList.add('counted');
+            }
+        });
+    }, observerOptions);
+    
+    counters.forEach(counter => {
+        observer.observe(counter);
+    });
+}
+
+/**
+ * Animate individual counter
+ */
+function animateCounter(element) {
+    const target = parseInt(element.getAttribute('data-target'));
+    const duration = 2000; // 2 seconds
+    const increment = target / (duration / 16); // 60fps
+    let current = 0;
+    
+    const updateCounter = () => {
+        current += increment;
+        
+        if (current < target) {
+            element.textContent = Math.floor(current).toLocaleString() + '+';
+            requestAnimationFrame(updateCounter);
+        } else {
+            element.textContent = target.toLocaleString() + '+';
+        }
+    };
+    
+    updateCounter();
+}
+
+/**
+ * Clone University Logos for Infinite Scroll
+ */
+function cloneUniversityLogos() {
+    const track = document.querySelector('.university-logos-track');
+    if (track) {
+        const items = Array.from(track.children);
+        items.forEach(item => {
+            const clone = item.cloneNode(true);
+            track.appendChild(clone);
+        });
+    }
+}

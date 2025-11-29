@@ -14,28 +14,28 @@ $totalTeachers = 320;
         <div class="row align-items-center">
             <div class="col-lg-6 mb-5 mb-lg-0">
                 <h1 class="display-4 fw-bold mb-4 animate__animated animate__fadeInUp">
-                    Complete Learning Management System
+                    <?= __('hero_title') ?>
                 </h1>
                 <p class="lead mb-4 animate__animated animate__fadeInUp animate__delay-1s">
-                    Powerful platform for educational institutions to create, manage, and deliver courses efficiently.
+                    <?= __('hero_subtitle') ?>
                 </p>
                 <div class="d-flex gap-3 flex-wrap animate__animated animate__fadeInUp animate__delay-2s">
                     <?php if (isLoggedIn()): ?>
                         <?php if (hasRole('teacher') || hasRole('admin')): ?>
                             <a href="teacher/create-course.php" class="btn btn-light btn-lg px-4">
-                                <i class="fas fa-plus me-2"></i>Create Course
+                                <i class="fas fa-plus <?= getLanguageDirection() === 'rtl' ? 'ms-2' : 'me-2' ?>"></i><?= __('create_course') ?>
                             </a>
                         <?php else: ?>
                             <a href="student/" class="btn btn-light btn-lg px-4">
-                                <i class="fas fa-book-reader me-2"></i>My Courses
+                                <i class="fas fa-book-reader <?= getLanguageDirection() === 'rtl' ? 'ms-2' : 'me-2' ?>"></i><?= __('my_courses') ?>
                             </a>
                         <?php endif; ?>
                     <?php else: ?>
                         <a href="auth/login.php" class="btn btn-light btn-lg px-4">
-                            <i class="fas fa-sign-in-alt me-2"></i>Login
+                            <i class="fas fa-sign-in-alt <?= getLanguageDirection() === 'rtl' ? 'ms-2' : 'me-2' ?>"></i><?= __('login') ?>
                         </a>
                         <a href="auth/register.php" class="btn btn-outline-light btn-lg px-4">
-                            <i class="fas fa-user-plus me-2"></i>Register
+                            <i class="fas fa-user-plus <?= getLanguageDirection() === 'rtl' ? 'ms-2' : 'me-2' ?>"></i><?= __('register') ?>
                         </a>
                     <?php endif; ?>
                 </div>
@@ -53,16 +53,16 @@ $totalTeachers = 320;
     <div class="container">
         <div class="row text-center">
             <div class="col-md-4 stat-item">
-                <div class="stat-number"><?= number_format($totalStudents) ?>+</div>
-                <p class="text-light mb-0">Enrolled Students</p>
+                <div class="stat-number" data-target="<?= $totalStudents ?>">0</div>
+                <p class="text-light mb-0"><?= __('enrolled_students') ?></p>
             </div>
             <div class="col-md-4 stat-item">
-                <div class="stat-number"><?= number_format($totalCourses) ?>+</div>
-                <p class="text-light mb-0">Courses Created</p>
+                <div class="stat-number" data-target="<?= $totalCourses ?>">0</div>
+                <p class="text-light mb-0"><?= __('courses_created') ?></p>
             </div>
             <div class="col-md-4 stat-item">
-                <div class="stat-number"><?= number_format($totalTeachers) ?>+</div>
-                <p class="text-light mb-0">Instructors</p>
+                <div class="stat-number" data-target="<?= $totalTeachers ?>">0</div>
+                <p class="text-light mb-0"><?= __('instructors') ?></p>
             </div>
         </div>
     </div>
@@ -70,49 +70,49 @@ $totalTeachers = 320;
 
 <!-- Features Section -->
 <section class="features">
-    <h2>Everything You Need to Teach & Learn</h2>
+    <h2><?= __('features_title') ?></h2>
     <div class="feature-grid">
         <div class="feature-card">
-            <div class="icon" style="background: rgba(79, 70, 229, 0.1); color: var(--primary);">
+            <div class="icon icon-primary">
                 <i class="fas fa-tasks"></i>
             </div>
-            <h3>Assignments</h3>
-            <p>Create assignments with deadlines and point values. Students can upload files and submit their work.</p>
+            <h3><?= __('assignments') ?></h3>
+            <p><?= __('assignments_desc') ?></p>
         </div>
         <div class="feature-card">
-            <div class="icon" style="background: rgba(6, 182, 212, 0.1); color: var(--info);">
+            <div class="icon icon-info">
                 <i class="fas fa-question-circle"></i>
             </div>
-            <h3>Quizzes</h3>
-            <p>Build timed quizzes with multiple choice questions. Automatic grading saves time.</p>
+            <h3><?= __('quizzes') ?></h3>
+            <p><?= __('quizzes_desc') ?></p>
         </div>
         <div class="feature-card">
-            <div class="icon" style="background: rgba(16, 185, 129, 0.1); color: var(--success);">
+            <div class="icon icon-success">
                 <i class="fas fa-star"></i>
             </div>
-            <h3>Gradebook</h3>
-            <p>Track all grades in one place. Provide feedback to students on their submissions.</p>
+            <h3><?= __('gradebook') ?></h3>
+            <p><?= __('gradebook_desc') ?></p>
         </div>
         <div class="feature-card">
-            <div class="icon" style="background: rgba(245, 158, 11, 0.1); color: var(--warning);">
+            <div class="icon icon-warning">
                 <i class="fas fa-folder"></i>
             </div>
-            <h3>Course Materials</h3>
-            <p>Upload PDFs, documents, and other files. Students can download materials anytime.</p>
+            <h3><?= __('course_materials') ?></h3>
+            <p><?= __('course_materials_desc') ?></p>
         </div>
         <div class="feature-card">
-            <div class="icon" style="background: rgba(239, 68, 68, 0.1); color: var(--danger);">
+            <div class="icon icon-danger">
                 <i class="fas fa-users"></i>
             </div>
-            <h3>Student Management</h3>
-            <p>Easy enrollment with course codes. Monitor student progress and participation.</p>
+            <h3><?= __('student_management') ?></h3>
+            <p><?= __('student_management_desc') ?></p>
         </div>
         <div class="feature-card">
-            <div class="icon" style="background: rgba(139, 92, 246, 0.1); color: #8b5cf6;">
+            <div class="icon icon-purple">
                 <i class="fas fa-chart-bar"></i>
             </div>
-            <h3>Analytics</h3>
-            <p>View quiz statistics, submission rates, and class performance at a glance.</p>
+            <h3><?= __('analytics') ?></h3>
+            <p><?= __('analytics_desc') ?></p>
         </div>
     </div>
 </section>
@@ -120,33 +120,10 @@ $totalTeachers = 320;
 <!-- Partner Universities Section -->
 <section class="py-4 bg-light overflow-hidden">
     <div class="container mb-3">
-        <h5 class="text-center text-muted fw-semibold">Trusted by Leading Canadian Universities</h5>
+        <h5 class="text-center text-muted fw-semibold"><?= __('trusted_by') ?></h5>
     </div>
     <div class="university-logos-wrapper">
         <div class="university-logos-track">
-            <!-- First set of logos -->
-            <div class="university-logo-item">
-                <img src="<?= SITE_URL ?>/assets/images/universities/university_of_toronto.png" alt="University of Toronto" loading="lazy">
-            </div>
-            <div class="university-logo-item">
-                <img src="<?= SITE_URL ?>/assets/images/universities/McGill_University.png" alt="McGill University" loading="lazy">
-            </div>
-            <div class="university-logo-item">
-                <img src="<?= SITE_URL ?>/assets/images/universities/University_of_British_Columbia.png" alt="UBC" loading="lazy">
-            </div>
-            <div class="university-logo-item">
-                <img src="<?= SITE_URL ?>/assets/images/universities/University_of_Alberta.png" alt="University of Alberta" loading="lazy">
-            </div>
-            <div class="university-logo-item">
-                <img src="<?= SITE_URL ?>/assets/images/universities/McMaster_University.png" alt="McMaster University" loading="lazy">
-            </div>
-            <div class="university-logo-item">
-                <img src="<?= SITE_URL ?>/assets/images/universities/University_of_Waterloo.png" alt="University of Waterloo" loading="lazy">
-            </div>
-            <div class="university-logo-item">
-                <img src="<?= SITE_URL ?>/assets/images/universities/Ontario Tech University.png" alt="Ontario Tech University" loading="lazy">
-            </div>
-            <!-- Duplicate set for seamless loop -->
             <div class="university-logo-item">
                 <img src="<?= SITE_URL ?>/assets/images/universities/university_of_toronto.png" alt="University of Toronto" loading="lazy">
             </div>

@@ -1,0 +1,128 @@
+<?php
+return [
+    // Navigation
+    'home' => 'Home',
+    'contact' => 'Contatto',
+    'about' => 'Chi siamo',
+    'login' => 'Accedi',
+    'register' => 'Registrati',
+    'get_started' => 'Inizia',
+    'logout' => 'Esci',
+    'dashboard' => 'Dashboard',
+    'profile' => 'Profilo',
+    'teacher_dashboard' => 'Dashboard insegnante',
+    'my_learning' => 'Il mio apprendimento',
+    
+    // Hero Section
+    'hero_title' => 'Sistema completo di gestione dell\'apprendimento',
+    'hero_subtitle' => 'Piattaforma potente per le istituzioni educative per creare, gestire e fornire corsi in modo efficiente.',
+    'create_course' => 'Crea corso',
+    'my_courses' => 'I miei corsi',
+    
+    // Stats
+    'enrolled_students' => 'Studenti iscritti',
+    'courses_created' => 'Corsi creati',
+    'instructors' => 'Istruttori',
+    
+    // Features
+    'features_title' => 'Tutto ciò di cui hai bisogno per insegnare e imparare',
+    'assignments' => 'Compiti',
+    'assignments_desc' => 'Crea compiti con scadenze e punteggi. Gli studenti possono caricare file e inviare il loro lavoro.',
+    'quizzes' => 'Quiz',
+    'quizzes_desc' => 'Crea quiz a tempo con domande a scelta multipla. La correzione automatica fa risparmiare tempo.',
+    'gradebook' => 'Registro dei voti',
+    'gradebook_desc' => 'Tieni traccia di tutti i voti in un unico posto. Fornisci feedback agli studenti sui loro invii.',
+    'course_materials' => 'Materiali del corso',
+    'course_materials_desc' => 'Carica PDF, documenti e altri file. Gli studenti possono scaricare i materiali in qualsiasi momento.',
+    'student_management' => 'Gestione studenti',
+    'student_management_desc' => 'Iscrizione facile con codici corso. Monitora i progressi e la partecipazione degli studenti.',
+    'analytics' => 'Analisi',
+    'analytics_desc' => 'Visualizza statistiche dei quiz, tassi di invio e prestazioni della classe a colpo d\'occhio.',
+    
+    // Universities
+    'trusted_by' => 'Fidato dalle principali università canadesi',
+    
+    // Footer
+    'quick_links' => 'Link veloci',
+    'connect' => 'Connetti',
+    'all_rights_reserved' => 'Tutti i diritti riservati',
+    'simple_lms' => 'Sistema di gestione dell\'apprendimento semplice',
+    
+    // Login
+    'welcome_back' => 'Bentornato!',
+    'sign_in_continue' => 'Accedi per continuare ad imparare',
+    'email_address' => 'Indirizzo email',
+    'password' => 'Password',
+    'confirm_password' => 'Conferma password',
+    'remember_me' => 'Ricordami',
+    'forgot_password' => 'Password dimenticata?',
+    'sign_in' => 'Accedi',
+    'dont_have_account' => 'Non hai un account?',
+    'sign_up' => 'Registrati',
+    
+    // Register
+    'create_account' => 'Crea account',
+    'start_learning_journey' => 'Inizia il tuo percorso di apprendimento oggi',
+    'full_name' => 'Nome completo',
+    'i_want_to' => 'Voglio:',
+    'learn' => 'Imparare',
+    'teach' => 'Insegnare',
+    'agree_to' => 'Accetto i',
+    'terms_of_service' => 'Termini di servizio',
+    'and' => 'e',
+    'privacy_policy' => 'Informativa sulla privacy',
+    'already_have_account' => 'Hai già un account?',
+    
+    // Contact
+    'contact_us' => 'Contattaci',
+    'contact_subtitle' => 'Hai domande? Ci piacerebbe sentirti.',
+    'email' => 'Email',
+    'phone' => 'Telefono',
+    'address' => 'Indirizzo',
+    'name' => 'Nome',
+    'subject' => 'Oggetto',
+    'message' => 'Messaggio',
+    'send_message' => 'Invia messaggio',
+    
+    // About
+    'about_us' => 'Chi siamo',
+    'about_subtitle' => 'Potenziare l\'istruzione attraverso soluzioni innovative di gestione dell\'apprendimento.',
+    'our_mission' => 'La nostra missione',
+    'mission_text' => 'Fornire alle istituzioni educative strumenti potenti e facili da usare che migliorano l\'esperienza di insegnamento e apprendimento per tutti.',
+    'our_vision' => 'La nostra visione',
+    'vision_text' => 'Essere la piattaforma di gestione dell\'apprendimento leader che trasforma l\'istruzione attraverso la tecnologia, rendendo l\'istruzione di qualità accessibile a tutti.',
+    'why_choose' => 'Perché scegliere LearnHub?',
+    'user_friendly' => 'Interfaccia intuitiva',
+    'user_friendly_desc' => 'Design intuitivo che facilita la navigazione per insegnanti e studenti.',
+    'comprehensive_tools' => 'Strumenti completi',
+    'comprehensive_tools_desc' => 'Tutto ciò di cui hai bisogno per compiti, quiz, voti e altro ancora.',
+    'trusted_universities' => 'Fidato dalle università',
+    'trusted_universities_desc' => 'Utilizzato dalle principali istituzioni educative canadesi.',
+    'support_24_7' => 'Supporto 24/7',
+    'support_24_7_desc' => 'Il nostro team dedicato è sempre qui per aiutarti ad avere successo.',
+    'ready_to_start' => 'Pronto per iniziare?',
+    'join_educators' => 'Unisciti a migliaia di educatori e studenti che già utilizzano LearnHub.',
+    'get_started_today' => 'Inizia oggi',
+    
+    // Teacher Dashboard
+    'welcome' => 'Benvenuto',
+    'total_students' => 'Totale studenti',
+    'pending_grades' => 'Voti in sospeso',
+    'recent_quiz_attempts' => 'Tentativi di quiz recenti',
+    'quick_actions' => 'Azioni rapide',
+    'new_assignment' => 'Nuovo compito',
+    'new_quiz' => 'Nuovo quiz',
+    'upload_material' => 'Carica materiale',
+    'manage_courses' => 'Gestisci corsi',
+    'submissions_to_grade' => 'Consegne da valutare',
+    'view_all' => 'Visualizza tutto',
+    'all_caught_up' => 'Tutto aggiornato! Nessuna consegna in sospeso.',
+    'student' => 'Studente',
+    'assignment' => 'Compito',
+    'course' => 'Corso',
+    'submitted' => 'Consegnato',
+    'action' => 'Azione',
+    'grade' => 'Voto',
+    'please_login' => 'Effettua il login per continuare',
+    'access_denied' => 'Accesso negato',
+];

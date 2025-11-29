@@ -1,0 +1,128 @@
+<?php
+return [
+    // Navigation
+    'home' => 'Home',
+    'contact' => 'Contact',
+    'about' => 'About',
+    'login' => 'Login',
+    'register' => 'Register',
+    'get_started' => 'Get Started',
+    'logout' => 'Logout',
+    'dashboard' => 'Dashboard',
+    'profile' => 'Profile',
+    'teacher_dashboard' => 'Teacher Dashboard',
+    'my_learning' => 'My Learning',
+    
+    // Hero Section
+    'hero_title' => 'Complete Learning Management System',
+    'hero_subtitle' => 'Powerful platform for educational institutions to create, manage, and deliver courses efficiently.',
+    'create_course' => 'Create Course',
+    'my_courses' => 'My Courses',
+    
+    // Stats
+    'enrolled_students' => 'Enrolled Students',
+    'courses_created' => 'Courses Created',
+    'instructors' => 'Instructors',
+    
+    // Features
+    'features_title' => 'Everything You Need to Teach & Learn',
+    'assignments' => 'Assignments',
+    'assignments_desc' => 'Create assignments with deadlines and point values. Students can upload files and submit their work.',
+    'quizzes' => 'Quizzes',
+    'quizzes_desc' => 'Build timed quizzes with multiple choice questions. Automatic grading saves time.',
+    'gradebook' => 'Gradebook',
+    'gradebook_desc' => 'Track all grades in one place. Provide feedback to students on their submissions.',
+    'course_materials' => 'Course Materials',
+    'course_materials_desc' => 'Upload PDFs, documents, and other files. Students can download materials anytime.',
+    'student_management' => 'Student Management',
+    'student_management_desc' => 'Easy enrollment with course codes. Monitor student progress and participation.',
+    'analytics' => 'Analytics',
+    'analytics_desc' => 'View quiz statistics, submission rates, and class performance at a glance.',
+    
+    // Universities
+    'trusted_by' => 'Trusted by Leading Canadian Universities',
+    
+    // Footer
+    'quick_links' => 'Quick Links',
+    'connect' => 'Connect',
+    'all_rights_reserved' => 'All rights reserved',
+    'simple_lms' => 'Simple Learning Management System',
+    
+    // Login
+    'welcome_back' => 'Welcome Back!',
+    'sign_in_continue' => 'Sign in to continue learning',
+    'email_address' => 'Email Address',
+    'password' => 'Password',
+    'confirm_password' => 'Confirm Password',
+    'remember_me' => 'Remember me',
+    'forgot_password' => 'Forgot password?',
+    'sign_in' => 'Sign In',
+    'dont_have_account' => "Don't have an account?",
+    'sign_up' => 'Sign Up',
+    
+    // Register
+    'create_account' => 'Create Account',
+    'start_learning_journey' => 'Start your learning journey today',
+    'full_name' => 'Full Name',
+    'i_want_to' => 'I want to:',
+    'learn' => 'Learn',
+    'teach' => 'Teach',
+    'agree_to' => 'I agree to the',
+    'terms_of_service' => 'Terms of Service',
+    'and' => 'and',
+    'privacy_policy' => 'Privacy Policy',
+    'already_have_account' => 'Already have an account?',
+    
+    // Contact
+    'contact_us' => 'Contact Us',
+    'contact_subtitle' => "Have questions? We'd love to hear from you.",
+    'email' => 'Email',
+    'phone' => 'Phone',
+    'address' => 'Address',
+    'name' => 'Name',
+    'subject' => 'Subject',
+    'message' => 'Message',
+    'send_message' => 'Send Message',
+    
+    // About
+    'about_us' => 'About Us',
+    'about_subtitle' => 'Empowering education through innovative learning management solutions.',
+    'our_mission' => 'Our Mission',
+    'mission_text' => 'To provide educational institutions with powerful, easy-to-use tools that enhance the teaching and learning experience for everyone.',
+    'our_vision' => 'Our Vision',
+    'vision_text' => 'To be the leading learning management platform that transforms education through technology, making quality education accessible to all.',
+    'why_choose' => 'Why Choose LearnHub?',
+    'user_friendly' => 'User-Friendly Interface',
+    'user_friendly_desc' => 'Intuitive design that makes it easy for teachers and students to navigate.',
+    'comprehensive_tools' => 'Comprehensive Tools',
+    'comprehensive_tools_desc' => 'Everything you need for assignments, quizzes, grades, and more.',
+    'trusted_universities' => 'Trusted by Universities',
+    'trusted_universities_desc' => 'Used by leading Canadian educational institutions.',
+    'support_24_7' => '24/7 Support',
+    'support_24_7_desc' => 'Our dedicated team is always here to help you succeed.',
+    'ready_to_start' => 'Ready to Get Started?',
+    'join_educators' => 'Join thousands of educators and students already using LearnHub.',
+    'get_started_today' => 'Get Started Today',
+    
+    // Teacher Dashboard
+    'welcome' => 'Welcome',
+    'total_students' => 'Total Students',
+    'pending_grades' => 'Pending Grades',
+    'recent_quiz_attempts' => 'Recent Quiz Attempts',
+    'quick_actions' => 'Quick Actions',
+    'new_assignment' => 'New Assignment',
+    'new_quiz' => 'New Quiz',
+    'upload_material' => 'Upload Material',
+    'manage_courses' => 'Manage Courses',
+    'submissions_to_grade' => 'Submissions to Grade',
+    'view_all' => 'View All',
+    'all_caught_up' => 'All caught up! No pending submissions.',
+    'student' => 'Student',
+    'assignment' => 'Assignment',
+    'course' => 'Course',
+    'submitted' => 'Submitted',
+    'action' => 'Action',
+    'grade' => 'Grade',
+    'please_login' => 'Please login to continue',
+    'access_denied' => 'Access denied',
+];

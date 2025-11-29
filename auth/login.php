@@ -34,7 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="<?= getCurrentLanguage() ?>" dir="<?= getLanguageDirection() ?>">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -61,12 +61,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div class="container">
             <div class="auth-card">
                 <div class="text-center mb-4">
-                    <a href="<?= SITE_URL ?>" class="logo text-decoration-none">
+                    <a href="<?= SITE_URL ?>" class="logo text-decoration-none text-primary">
                         <i class="fas fa-graduation-cap"></i>
                         <span class="fw-bold"><?= SITE_NAME ?></span>
                     </a>
-                    <h4 class="mt-3 mb-1">Welcome Back!</h4>
-                    <p class="text-muted">Sign in to continue learning</p>
+                    <h4 class="mt-3 mb-1"><?= __('welcome_back') ?></h4>
+                    <p class="text-muted"><?= __('sign_in_continue') ?></p>
                 </div>
                 
                 <?php if ($error): ?>
@@ -77,7 +77,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 
                 <form method="POST" class="needs-validation" novalidate>
                     <div class="mb-3">
-                        <label for="email" class="form-label">Email Address</label>
+                        <label for="email" class="form-label"><?= __('email_address') ?></label>
                         <div class="input-group">
                             <span class="input-group-text"><i class="fas fa-envelope"></i></span>
                             <input type="email" class="form-control" id="email" name="email" 
@@ -86,7 +86,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </div>
                     
                     <div class="mb-3">
-                        <label for="password" class="form-label">Password</label>
+                        <label for="password" class="form-label"><?= __('password') ?></label>
                         <div class="input-group">
                             <span class="input-group-text"><i class="fas fa-lock"></i></span>
                             <input type="password" class="form-control" id="password" name="password" required>
@@ -99,18 +99,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <div class="form-check">
                             <input type="checkbox" class="form-check-input" id="remember" name="remember">
-                            <label class="form-check-label" for="remember">Remember me</label>
+                            <label class="form-check-label" for="remember"><?= __('remember_me') ?></label>
                         </div>
-                        <a href="forgot-password.php" class="text-primary">Forgot password?</a>
+                        <a href="forgot-password.php" class="text-primary"><?= __('forgot_password') ?></a>
                     </div>
                     
                     <button type="submit" class="btn btn-primary w-100 py-2 mb-3">
-                        <i class="fas fa-sign-in-alt me-2"></i>Sign In
+                        <i class="fas fa-sign-in-alt me-2"></i><?= __('sign_in') ?>
                     </button>
                     
                     <div class="text-center">
-                        <p class="mb-0">Don't have an account? 
-                            <a href="register.php" class="text-primary fw-semibold">Sign Up</a>
+                        <p class="mb-0"><?= __('dont_have_account') ?> 
+                            <a href="register.php" class="text-primary fw-semibold"><?= __('sign_up') ?></a>
                         </p>
                     </div>
                 </form>

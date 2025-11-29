@@ -6,20 +6,20 @@
             <div class="row g-4">
                 <div class="col-md-6">
                     <h5 class="fw-bold mb-3">
-                        <i class="fas fa-graduation-cap me-2"></i><?= SITE_NAME ?>
+                        <i class="fas fa-graduation-cap <?= getLanguageDirection() === 'rtl' ? 'ms-2' : 'me-2' ?>"></i><?= SITE_NAME ?>
                     </h5>
-                    <p class="text-white-50 mb-0"> Simple Learning Management System</p>
+                    <p class="text-white-50 mb-0"><?= __('simple_lms') ?></p>
                 </div>
                 <div class="col-md-3">
-                    <h6 class="fw-bold mb-3">Quick Links</h6>
+                    <h6 class="fw-bold mb-3"><?= __('quick_links') ?></h6>
                     <ul class="list-unstyled">
-                        <li class="mb-2"><a href="<?= SITE_URL ?>" class="text-white-50 text-decoration-none">Home</a></li>
-                        <li class="mb-2"><a href="<?= SITE_URL ?>/contact.php" class="text-white-50 text-decoration-none">Contact</a></li>
-                        <li class="mb-2"><a href="<?= SITE_URL ?>/about.php" class="text-white-50 text-decoration-none">About</a></li>
+                        <li class="mb-2"><a href="<?= SITE_URL ?>" class="text-white-50 text-decoration-none"><i class="fas fa-home <?= getLanguageDirection() === 'rtl' ? 'ms-2' : 'me-2' ?>"></i><?= __('home') ?></a></li>
+                        <li class="mb-2"><a href="<?= SITE_URL ?>/contact.php" class="text-white-50 text-decoration-none"><i class="fas fa-envelope <?= getLanguageDirection() === 'rtl' ? 'ms-2' : 'me-2' ?>"></i><?= __('contact') ?></a></li>
+                        <li class="mb-2"><a href="<?= SITE_URL ?>/about.php" class="text-white-50 text-decoration-none"><i class="fas fa-circle-info <?= getLanguageDirection() === 'rtl' ? 'ms-2' : 'me-2' ?>"></i><?= __('about') ?></a></li>
                     </ul>
                 </div>
                 <div class="col-md-3">
-                    <h6 class="fw-bold mb-3">Connect</h6>
+                    <h6 class="fw-bold mb-3"><?= __('connect') ?></h6>
                     <div class="d-flex gap-2 mb-3">
                         <a href="#" class="btn btn-outline-light btn-sm rounded-circle" style="width: 36px; height: 36px; padding: 0;">
                             <i class="fab fa-facebook-f"></i>
@@ -33,11 +33,11 @@
                     </div>
                     <div class="mt-3">
                         <div class="text-white-50 small">
-                            <i class="fas fa-calendar-day me-1"></i>
+                            <i class="fas fa-calendar-day <?= getLanguageDirection() === 'rtl' ? 'ms-1' : 'me-1' ?>"></i>
                             <span id="current-date"></span>
                         </div>
                         <div class="text-white-50 small mt-1">
-                            <i class="fas fa-clock me-1"></i>
+                            <i class="fas fa-clock <?= getLanguageDirection() === 'rtl' ? 'ms-1' : 'me-1' ?>"></i>
                             <span id="current-time"></span>
                         </div>
                     </div>
@@ -46,7 +46,7 @@
             <hr class="my-3 bg-white opacity-25">
             <div class="text-center">
                 <p class="text-white-50 mb-0">
-                    <small>&copy; <?= date('Y') ?> <?= SITE_NAME ?>. All rights reserved.</small>
+                    <small>&copy; <?= date('Y') ?> <?= SITE_NAME ?>. <?= __('all_rights_reserved') ?></small>
                 </p>
             </div>
         </div>

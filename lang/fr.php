@@ -1,0 +1,128 @@
+<?php
+return [
+    // Navigation
+    'home' => 'Accueil',
+    'contact' => 'Contact',
+    'about' => 'À propos',
+    'login' => 'Connexion',
+    'register' => 'S\'inscrire',
+    'get_started' => 'Commencer',
+    'logout' => 'Déconnexion',
+    'dashboard' => 'Tableau de bord',
+    'profile' => 'Profil',
+    'teacher_dashboard' => 'Tableau de bord enseignant',
+    'my_learning' => 'Mon apprentissage',
+    
+    // Hero Section
+    'hero_title' => 'Système de gestion de l\'apprentissage complet',
+    'hero_subtitle' => 'Plateforme puissante pour les établissements d\'enseignement afin de créer, gérer et dispenser des cours efficacement.',
+    'create_course' => 'Créer un cours',
+    'my_courses' => 'Mes cours',
+    
+    // Stats
+    'enrolled_students' => 'Étudiants inscrits',
+    'courses_created' => 'Cours créés',
+    'instructors' => 'Instructeurs',
+    
+    // Features
+    'features_title' => 'Tout ce dont vous avez besoin pour enseigner et apprendre',
+    'assignments' => 'Devoirs',
+    'assignments_desc' => 'Créez des devoirs avec des délais et des points. Les étudiants peuvent télécharger des fichiers et soumettre leur travail.',
+    'quizzes' => 'Quiz',
+    'quizzes_desc' => 'Créez des quiz chronométrés avec des questions à choix multiples. La notation automatique fait gagner du temps.',
+    'gradebook' => 'Carnet de notes',
+    'gradebook_desc' => 'Suivez toutes les notes en un seul endroit. Fournissez des commentaires aux étudiants sur leurs soumissions.',
+    'course_materials' => 'Matériel de cours',
+    'course_materials_desc' => 'Téléchargez des PDF, des documents et d\'autres fichiers. Les étudiants peuvent télécharger le matériel à tout moment.',
+    'student_management' => 'Gestion des étudiants',
+    'student_management_desc' => 'Inscription facile avec des codes de cours. Surveillez les progrès et la participation des étudiants.',
+    'analytics' => 'Analytique',
+    'analytics_desc' => 'Consultez les statistiques des quiz, les taux de soumission et les performances de la classe en un coup d\'œil.',
+    
+    // Universities
+    'trusted_by' => 'Approuvé par les principales universités canadiennes',
+    
+    // Footer
+    'quick_links' => 'Liens rapides',
+    'connect' => 'Connecter',
+    'all_rights_reserved' => 'Tous droits réservés',
+    'simple_lms' => 'Système de gestion de l\'apprentissage simple',
+    
+    // Login
+    'welcome_back' => 'Bon retour!',
+    'sign_in_continue' => 'Connectez-vous pour continuer à apprendre',
+    'email_address' => 'Adresse e-mail',
+    'password' => 'Mot de passe',
+    'confirm_password' => 'Confirmer le mot de passe',
+    'remember_me' => 'Se souvenir de moi',
+    'forgot_password' => 'Mot de passe oublié?',
+    'sign_in' => 'Se connecter',
+    'dont_have_account' => "Vous n'avez pas de compte?",
+    'sign_up' => 'S\'inscrire',
+    
+    // Register
+    'create_account' => 'Créer un compte',
+    'start_learning_journey' => 'Commencez votre parcours d\'apprentissage aujourd\'hui',
+    'full_name' => 'Nom complet',
+    'i_want_to' => 'Je veux:',
+    'learn' => 'Apprendre',
+    'teach' => 'Enseigner',
+    'agree_to' => 'J\'accepte les',
+    'terms_of_service' => 'Conditions d\'utilisation',
+    'and' => 'et',
+    'privacy_policy' => 'Politique de confidentialité',
+    'already_have_account' => 'Vous avez déjà un compte?',
+    
+    // Contact
+    'contact_us' => 'Contactez-nous',
+    'contact_subtitle' => 'Des questions? Nous serions ravis de vous entendre.',
+    'email' => 'E-mail',
+    'phone' => 'Téléphone',
+    'address' => 'Adresse',
+    'name' => 'Nom',
+    'subject' => 'Sujet',
+    'message' => 'Message',
+    'send_message' => 'Envoyer le message',
+    
+    // About
+    'about_us' => 'À propos de nous',
+    'about_subtitle' => 'Responsabiliser l\'éducation grâce à des solutions innovantes de gestion de l\'apprentissage.',
+    'our_mission' => 'Notre mission',
+    'mission_text' => 'Fournir aux établissements d\'enseignement des outils puissants et faciles à utiliser qui améliorent l\'expérience d\'enseignement et d\'apprentissage pour tous.',
+    'our_vision' => 'Notre vision',
+    'vision_text' => 'Être la plateforme de gestion de l\'apprentissage leader qui transforme l\'éducation grâce à la technologie, rendant une éducation de qualité accessible à tous.',
+    'why_choose' => 'Pourquoi choisir LearnHub?',
+    'user_friendly' => 'Interface conviviale',
+    'user_friendly_desc' => 'Conception intuitive qui facilite la navigation pour les enseignants et les étudiants.',
+    'comprehensive_tools' => 'Outils complets',
+    'comprehensive_tools_desc' => 'Tout ce dont vous avez besoin pour les devoirs, les quiz, les notes et plus encore.',
+    'trusted_universities' => 'Approuvé par les universités',
+    'trusted_universities_desc' => 'Utilisé par les principales institutions éducatives canadiennes.',
+    'support_24_7' => 'Support 24/7',
+    'support_24_7_desc' => 'Notre équipe dédiée est toujours là pour vous aider à réussir.',
+    'ready_to_start' => 'Prêt à commencer?',
+    'join_educators' => 'Rejoignez des milliers d\'éducateurs et d\'étudiants utilisant déjà LearnHub.',
+    'get_started_today' => 'Commencer aujourd\'hui',
+    
+    // Teacher Dashboard
+    'welcome' => 'Bienvenue',
+    'total_students' => 'Total des étudiants',
+    'pending_grades' => 'Notes en attente',
+    'recent_quiz_attempts' => 'Tentatives de quiz récentes',
+    'quick_actions' => 'Actions rapides',
+    'new_assignment' => 'Nouveau devoir',
+    'new_quiz' => 'Nouveau quiz',
+    'upload_material' => 'Télécharger du matériel',
+    'manage_courses' => 'Gérer les cours',
+    'submissions_to_grade' => 'Soumissions à noter',
+    'view_all' => 'Voir tout',
+    'all_caught_up' => 'Tout est à jour! Aucune soumission en attente.',
+    'student' => 'Étudiant',
+    'assignment' => 'Devoir',
+    'course' => 'Cours',
+    'submitted' => 'Soumis',
+    'action' => 'Action',
+    'grade' => 'Note',
+    'please_login' => 'Veuillez vous connecter pour continuer',
+    'access_denied' => 'Accès refusé',
+];

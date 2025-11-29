@@ -52,7 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="<?= getCurrentLanguage() ?>" dir="<?= getLanguageDirection() ?>">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -79,12 +79,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div class="container">
             <div class="auth-card">
                 <div class="text-center mb-4">
-                    <a href="<?= SITE_URL ?>" class="logo text-decoration-none">
+                    <a href="<?= SITE_URL ?>" class="logo text-decoration-none text-primary">
                         <i class="fas fa-graduation-cap"></i>
                         <span class="fw-bold"><?= SITE_NAME ?></span>
                     </a>
-                    <h4 class="mt-3 mb-1">Create Account</h4>
-                    <p class="text-muted">Start your learning journey today</p>
+                    <h4 class="mt-3 mb-1"><?= __('create_account') ?></h4>
+                    <p class="text-muted"><?= __('start_learning_journey') ?></p>
                 </div>
                 
                 <?php if ($error): ?>
@@ -95,7 +95,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 
                 <form method="POST" class="needs-validation" novalidate>
                     <div class="mb-3">
-                        <label for="full_name" class="form-label">Full Name</label>
+                        <label for="full_name" class="form-label"><?= __('full_name') ?></label>
                         <div class="input-group">
                             <span class="input-group-text"><i class="fas fa-user"></i></span>
                             <input type="text" class="form-control" id="full_name" name="full_name" 
@@ -104,7 +104,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </div>
                     
                     <div class="mb-3">
-                        <label for="email" class="form-label">Email Address</label>
+                        <label for="email" class="form-label"><?= __('email_address') ?></label>
                         <div class="input-group">
                             <span class="input-group-text"><i class="fas fa-envelope"></i></span>
                             <input type="email" class="form-control" id="email" name="email" 
@@ -113,7 +113,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </div>
                     
                     <div class="mb-3">
-                        <label for="password" class="form-label">Password</label>
+                        <label for="password" class="form-label"><?= __('password') ?></label>
                         <div class="input-group">
                             <span class="input-group-text"><i class="fas fa-lock"></i></span>
                             <input type="password" class="form-control" id="password" name="password" 
@@ -123,7 +123,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </div>
                     
                     <div class="mb-3">
-                        <label for="confirm_password" class="form-label">Confirm Password</label>
+                        <label for="confirm_password" class="form-label"><?= __('confirm_password') ?></label>
                         <div class="input-group">
                             <span class="input-group-text"><i class="fas fa-lock"></i></span>
                             <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
@@ -131,20 +131,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </div>
                     
                     <div class="mb-4">
-                        <label class="form-label">I want to:</label>
+                        <label class="form-label"><?= __('i_want_to') ?></label>
                         <div class="row g-2">
                             <div class="col-6">
                                 <input type="radio" class="btn-check" name="role" id="role_student" value="student" checked>
                                 <label class="btn btn-outline-primary w-100 py-3" for="role_student">
                                     <i class="fas fa-user-graduate d-block mb-2 fs-4"></i>
-                                    Learn
+                                    <?= __('learn') ?>
                                 </label>
                             </div>
                             <div class="col-6">
                                 <input type="radio" class="btn-check" name="role" id="role_teacher" value="teacher">
                                 <label class="btn btn-outline-primary w-100 py-3" for="role_teacher">
                                     <i class="fas fa-chalkboard-teacher d-block mb-2 fs-4"></i>
-                                    Teach
+                                    <?= __('teach') ?>
                                 </label>
                             </div>
                         </div>
@@ -153,18 +153,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <div class="form-check mb-4">
                         <input type="checkbox" class="form-check-input" id="terms" required>
                         <label class="form-check-label" for="terms">
-                            I agree to the <a href="#" class="text-primary">Terms of Service</a> 
-                            and <a href="#" class="text-primary">Privacy Policy</a>
+                            <?= __('agree_to') ?> <a href="#" class="text-primary"><?= __('terms_of_service') ?></a> 
+                            <?= __('and') ?> <a href="#" class="text-primary"><?= __('privacy_policy') ?></a>
                         </label>
                     </div>
                     
                     <button type="submit" class="btn btn-primary w-100 py-2 mb-3">
-                        <i class="fas fa-user-plus me-2"></i>Create Account
+                        <i class="fas fa-user-plus me-2"></i><?= __('create_account') ?>
                     </button>
                     
                     <div class="text-center">
-                        <p class="mb-0">Already have an account? 
-                            <a href="login.php" class="text-primary fw-semibold">Sign In</a>
+                        <p class="mb-0"><?= __('already_have_account') ?> 
+                            <a href="login.php" class="text-primary fw-semibold"><?= __('sign_in') ?></a>
                         </p>
                     </div>
                 </form>

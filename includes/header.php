@@ -3,7 +3,7 @@ require_once __DIR__ . '/../config/config.php';
 $currentUser = getCurrentUser();
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="<?= getCurrentLanguage() ?>" dir="<?= getLanguageDirection() ?>">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -35,17 +35,24 @@ $currentUser = getCurrentUser();
         .hero-section{background:linear-gradient(135deg,#4f46e5 0%,#06b6d4 100%);padding:80px 0;min-height:500px}
         .navbar{padding:1rem 0;background:#fff!important}
         .stats-section{background:linear-gradient(135deg,#1f2937 0%,#111827 100%);padding:60px 0}
+        body[dir="rtl"]{text-align:right;direction:rtl}
+        body[dir="rtl"] .navbar-brand{flex-direction:row-reverse}
+        body[dir="rtl"] .navbar-nav{margin-left:0!important;margin-right:auto!important}
+        body[dir="rtl"] .nav-link{flex-direction:row-reverse}
+        body[dir="rtl"] .dropdown-menu-end{right:auto!important;left:0!important}
+        body[dir="rtl"] .dropdown-item{display:flex;flex-direction:row-reverse;justify-content:flex-end}
+        .navbar-brand,.nav-link,.dropdown-item{display:inline-flex;align-items:center}
     </style>
     
     <!-- CSS -->
-    <link rel="stylesheet" href="<?= SITE_URL ?>/assets/css/style.css">
+    <link rel="stylesheet" href="<?= SITE_URL ?>/assets/css/style.css?v=<?= time() ?>">
 </head>
 <body>
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top">
         <div class="container">
             <a class="navbar-brand fw-bold text-primary" href="<?= SITE_URL ?>">
-                <i class="fas fa-graduation-cap me-2"></i><?= SITE_NAME ?>
+                <i class="fas fa-graduation-cap <?= getLanguageDirection() === 'rtl' ? 'ms-2' : 'me-2' ?>"></i><?= SITE_NAME ?>
             </a>
             
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
@@ -53,25 +60,29 @@ $currentUser = getCurrentUser();
             </button>
             
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="<?= SITE_URL ?>/contact.php">
-                            <i class="fas fa-envelope me-1"></i>Contact
+                <ul class="navbar-nav <?= getLanguageDirection() === 'rtl' ? 'me-auto' : 'ms-auto' ?> align-items-center">
+                    <!-- Language Switcher -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="langDropdown" role="button" data-bs-toggle="dropdown">
+                            <?= AVAILABLE_LANGUAGES[getCurrentLanguage()]['flag'] ?> <?= AVAILABLE_LANGUAGES[getCurrentLanguage()]['name'] ?>
                         </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <?php foreach (AVAILABLE_LANGUAGES as $code => $lang): ?>
+                                <li>
+                                    <a class="dropdown-item <?= getCurrentLanguage() === $code ? 'active' : '' ?>" 
+                                       href="?lang=<?= $code ?>">
+                                        <?= $lang['flag'] ?> <?= $lang['name'] ?>
+                                    </a>
+                                </li>
+                            <?php endforeach; ?>
+                        </ul>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="<?= SITE_URL ?>/about.php">
-                            <i class="fas fa-circle-info me-1"></i>About
-                        </a>
-                    </li>
-                </ul>
-                
-                <ul class="navbar-nav">
+                    
                     <?php if (isLoggedIn()): ?>
                         <?php if (hasRole('teacher') || hasRole('admin')): ?>
                             <li class="nav-item">
-                                <a class="nav-link" href="<?= SITE_URL ?>/teacher/">
-                                    <i class="fas fa-chalkboard-user me-1"></i>Teacher Dashboard
+                                <a class="nav-link" href="<?= SITE_URL ?>/teacher/index.php">
+                                    <i class="fas fa-gauge <?= getLanguageDirection() === 'rtl' ? 'ms-1' : 'me-1' ?>"></i><?= __('dashboard') ?>
                                 </a>
                             </li>
                         <?php endif; ?>
@@ -79,37 +90,34 @@ $currentUser = getCurrentUser();
                         <?php if (hasRole('student')): ?>
                             <li class="nav-item">
                                 <a class="nav-link" href="<?= SITE_URL ?>/student/">
-                                    <i class="fas fa-book-open-reader me-1"></i>My Learning
+                                    <i class="fas fa-book-open-reader <?= getLanguageDirection() === 'rtl' ? 'ms-1' : 'me-1' ?>"></i><?= __('my_learning') ?>
                                 </a>
                             </li>
                         <?php endif; ?>
                         
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
-                                <i class="fas fa-user-circle me-1"></i><?= sanitize($currentUser['full_name']) ?>
+                                <i class="fas fa-user-circle <?= getLanguageDirection() === 'rtl' ? 'ms-1' : 'me-1' ?>"></i><?= sanitize($currentUser['full_name']) ?>
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end">
-                                <li><a class="dropdown-item" href="<?= SITE_URL ?>/<?= $currentUser['role'] ?>/">
-                                    <i class="fas fa-gauge me-2"></i>Dashboard
-                                </a></li>
                                 <li><a class="dropdown-item" href="<?= SITE_URL ?>/<?= $currentUser['role'] ?>/profile.php">
-                                    <i class="fas fa-user me-2"></i>Profile
+                                    <i class="fas fa-user <?= getLanguageDirection() === 'rtl' ? 'ms-2' : 'me-2' ?>"></i><?= __('profile') ?>
                                 </a></li>
                                 <li><hr class="dropdown-divider"></li>
                                 <li><a class="dropdown-item text-danger" href="<?= SITE_URL ?>/auth/logout.php">
-                                    <i class="fas fa-right-from-bracket me-2"></i>Logout
+                                    <i class="fas fa-right-from-bracket <?= getLanguageDirection() === 'rtl' ? 'ms-2' : 'me-2' ?>"></i><?= __('logout') ?>
                                 </a></li>
                             </ul>
                         </li>
                     <?php else: ?>
                         <li class="nav-item">
                             <a class="nav-link" href="<?= SITE_URL ?>/auth/login.php">
-                                <i class="fas fa-right-to-bracket me-1"></i>Login
+                                <i class="fas fa-right-to-bracket <?= getLanguageDirection() === 'rtl' ? 'ms-1' : 'me-1' ?>"></i><?= __('login') ?>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="btn btn-primary ms-2" href="<?= SITE_URL ?>/auth/register.php">
-                                Get Started
+                            <a class="btn btn-primary <?= getLanguageDirection() === 'rtl' ? 'me-2' : 'ms-2' ?>" href="<?= SITE_URL ?>/auth/register.php">
+                                <?= __('get_started') ?>
                             </a>
                         </li>
                     <?php endif; ?>

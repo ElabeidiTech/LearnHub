@@ -9,6 +9,9 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
+// Include language configuration
+require_once __DIR__ . '/languages.php';
+
 // Database Configuration
 define('DB_HOST', 'localhost');
 define('DB_NAME', 'learnhub');
@@ -40,143 +43,119 @@ try {
 
 // Helper Functions
 
-/**
- * Redirect to a URL
- */
-function redirect($url) {
-    header("Location: " . SITE_URL . $url);
-    exit;
-}
-
-/**
- * Check if user is logged in
- */
+// Check if user is logged in
 function isLoggedIn() {
     return isset($_SESSION['user_id']);
 }
 
-/**
- * Get current user data
- */
+// Get current user
 function getCurrentUser() {
     global $pdo;
     if (!isLoggedIn()) return null;
     
-    if ($pdo === null) {
-        // Return mock user data when database is not available
-        return [
-            'id' => $_SESSION['user_id'] ?? 1,
-            'full_name' => $_SESSION['user_name'] ?? 'Guest User',
-            'email' => $_SESSION['user_email'] ?? 'guest@example.com',
-            'role' => $_SESSION['user_role'] ?? 'student'
-        ];
+    if ($pdo) {
+        $stmt = $pdo->prepare("SELECT * FROM users WHERE id = ?");
+        $stmt->execute([$_SESSION['user_id']]);
+        return $stmt->fetch();
     }
     
-    $stmt = $pdo->prepare("SELECT * FROM users WHERE id = ?");
-    $stmt->execute([$_SESSION['user_id']]);
-    return $stmt->fetch();
+    // Return basic user data from session if no database
+    return [
+        'id' => $_SESSION['user_id'] ?? null,
+        'full_name' => $_SESSION['user_name'] ?? '',
+        'role' => $_SESSION['user_role'] ?? ''
+    ];
 }
 
-/**
- * Check if user has specific role
- */
+// Check user role
 function hasRole($role) {
-    if (!isLoggedIn()) return false;
-    return $_SESSION['user_role'] === $role;
+    return isset($_SESSION['user_role']) && $_SESSION['user_role'] === $role;
 }
 
-/**
- * Require login - redirect if not logged in
- */
+// Require login
 function requireLogin() {
     if (!isLoggedIn()) {
-        $_SESSION['flash_error'] = 'Please login to continue.';
-        redirect('/auth/login.php');
+        header('Location: ' . SITE_URL . '/auth/login.php');
+        exit;
     }
 }
 
-/**
- * Require specific role
- */
+// Require specific role
 function requireRole($role) {
     requireLogin();
-    if (!hasRole($role) && !hasRole('admin')) {
-        $_SESSION['flash_error'] = 'You do not have permission to access this page.';
-        redirect('/index.php');
+    if (!hasRole($role)) {
+        header('Location: ' . SITE_URL);
+        exit;
     }
 }
 
-/**
- * Sanitize input
- */
+// Sanitize input
 function sanitize($input) {
     return htmlspecialchars(trim($input), ENT_QUOTES, 'UTF-8');
 }
 
-/**
- * Display flash messages
- */
-function flashMessage() {
-    $html = '';
-    if (isset($_SESSION['flash_success'])) {
-        $html .= '<div class="alert alert-success alert-dismissible fade show" role="alert">'
-               . $_SESSION['flash_success']
-               . '<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>';
-        unset($_SESSION['flash_success']);
-    }
-    if (isset($_SESSION['flash_error'])) {
-        $html .= '<div class="alert alert-danger alert-dismissible fade show" role="alert">'
-               . $_SESSION['flash_error']
-               . '<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>';
-        unset($_SESSION['flash_error']);
-    }
-    return $html;
+// Redirect helper
+function redirect($path) {
+    $url = (strpos($path, 'http') === 0) ? $path : SITE_URL . $path;
+    header('Location: ' . $url);
+    exit;
 }
 
-/**
- * Format date
- */
+// Flash messages
+function setFlash($type, $message) {
+    $_SESSION['flash'] = ['type' => $type, 'message' => $message];
+}
+
+function getFlash() {
+    if (isset($_SESSION['flash'])) {
+        $flash = $_SESSION['flash'];
+        unset($_SESSION['flash']);
+        return $flash;
+    }
+    return null;
+}
+
+// Format date
 function formatDate($date) {
+    return date('M d, Y h:i A', strtotime($date));
+}
+
+// Format date short
+function formatDateShort($date) {
     return date('M d, Y', strtotime($date));
 }
 
-/**
- * Get average rating for a course
- */
-function getCourseRating($courseId) {
-    global $pdo;
-    if ($pdo === null) {
-        return ['avg_rating' => 4.5, 'total' => 10];
-    }
-    $stmt = $pdo->prepare("SELECT AVG(rating) as avg_rating, COUNT(*) as total FROM reviews WHERE course_id = ?");
-    $stmt->execute([$courseId]);
-    return $stmt->fetch();
+// Check if assignment is overdue
+function isOverdue($dueDate) {
+    return strtotime($dueDate) < time();
 }
 
-/**
- * Check if student is enrolled in course
- */
-function isEnrolled($studentId, $courseId) {
-    global $pdo;
-    if ($pdo === null) {
-        return false;
-    }
-    $stmt = $pdo->prepare("SELECT id FROM enrollments WHERE student_id = ? AND course_id = ?");
-    $stmt->execute([$studentId, $courseId]);
-    return $stmt->fetch() !== false;
+// Get time remaining
+function getTimeRemaining($dueDate) {
+    $diff = strtotime($dueDate) - time();
+    if ($diff < 0) return 'Overdue';
+    if ($diff < 3600) return floor($diff / 60) . ' min';
+    if ($diff < 86400) return floor($diff / 3600) . ' hours';
+    return floor($diff / 86400) . ' days';
 }
 
-/**
- * Get enrollment count for a course
- */
-function getEnrollmentCount($courseId) {
-    global $pdo;
-    if ($pdo === null) {
-        return rand(50, 500);
-    }
-    $stmt = $pdo->prepare("SELECT COUNT(*) as count FROM enrollments WHERE course_id = ?");
-    $stmt->execute([$courseId]);
-    $result = $stmt->fetch();
-    return $result['count'];
+// Generate random string
+function generateToken($length = 32) {
+    return bin2hex(random_bytes($length));
+}
+
+// Get file extension
+function getFileExtension($filename) {
+    return strtolower(pathinfo($filename, PATHINFO_EXTENSION));
+}
+
+// Allowed file types
+function getAllowedTypes() {
+    return ['pdf', 'doc', 'docx', 'txt', 'zip', 'rar', 'jpg', 'jpeg', 'png'];
+}
+
+// Max file size (10MB)
+function getMaxFileSize() {
+    return 10 * 1024 * 1024;
 }
 ?>
