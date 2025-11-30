@@ -1,10 +1,7 @@
--- LearnHub LMS Database Schema
--- Run this file to create the database and tables
-
 CREATE DATABASE IF NOT EXISTS learnhub;
 USE learnhub;
 
--- Users Table (Students and Teachers)
+
 CREATE TABLE users (
     id INT AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR(50) UNIQUE NOT NULL,
@@ -25,7 +22,7 @@ CREATE TABLE users (
     FOREIGN KEY (verified_by) REFERENCES users(id) ON DELETE SET NULL
 );
 
--- Courses Table
+
 CREATE TABLE courses (
     id INT AUTO_INCREMENT PRIMARY KEY,
     teacher_id INT NOT NULL,
@@ -36,7 +33,7 @@ CREATE TABLE courses (
     FOREIGN KEY (teacher_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
--- Course Enrollments
+
 CREATE TABLE enrollments (
     id INT AUTO_INCREMENT PRIMARY KEY,
     student_id INT NOT NULL,
@@ -47,7 +44,7 @@ CREATE TABLE enrollments (
     UNIQUE KEY unique_enrollment (student_id, course_id)
 );
 
--- Assignments Table
+
 CREATE TABLE assignments (
     id INT AUTO_INCREMENT PRIMARY KEY,
     course_id INT NOT NULL,
@@ -61,7 +58,7 @@ CREATE TABLE assignments (
     FOREIGN KEY (course_id) REFERENCES courses(id) ON DELETE CASCADE
 );
 
--- Assignment Submissions
+
 CREATE TABLE submissions (
     id INT AUTO_INCREMENT PRIMARY KEY,
     assignment_id INT NOT NULL,
@@ -77,7 +74,7 @@ CREATE TABLE submissions (
     FOREIGN KEY (student_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
--- Quizzes Table
+
 CREATE TABLE quizzes (
     id INT AUTO_INCREMENT PRIMARY KEY,
     course_id INT NOT NULL,
@@ -90,7 +87,7 @@ CREATE TABLE quizzes (
     FOREIGN KEY (course_id) REFERENCES courses(id) ON DELETE CASCADE
 );
 
--- Quiz Questions
+
 CREATE TABLE quiz_questions (
     id INT AUTO_INCREMENT PRIMARY KEY,
     quiz_id INT NOT NULL,
@@ -104,7 +101,7 @@ CREATE TABLE quiz_questions (
     FOREIGN KEY (quiz_id) REFERENCES quizzes(id) ON DELETE CASCADE
 );
 
--- Quiz Attempts
+
 CREATE TABLE quiz_attempts (
     id INT AUTO_INCREMENT PRIMARY KEY,
     quiz_id INT NOT NULL,
@@ -117,7 +114,7 @@ CREATE TABLE quiz_attempts (
     FOREIGN KEY (student_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
--- Quiz Answers
+
 CREATE TABLE quiz_answers (
     id INT AUTO_INCREMENT PRIMARY KEY,
     attempt_id INT NOT NULL,
@@ -128,7 +125,7 @@ CREATE TABLE quiz_answers (
     FOREIGN KEY (question_id) REFERENCES quiz_questions(id) ON DELETE CASCADE
 );
 
--- Course Materials/Files
+
 CREATE TABLE materials (
     id INT AUTO_INCREMENT PRIMARY KEY,
     course_id INT NOT NULL,
@@ -141,7 +138,7 @@ CREATE TABLE materials (
     FOREIGN KEY (course_id) REFERENCES courses(id) ON DELETE CASCADE
 );
 
--- Announcements
+
 CREATE TABLE announcements (
     id INT AUTO_INCREMENT PRIMARY KEY,
     course_id INT NOT NULL,
@@ -151,7 +148,7 @@ CREATE TABLE announcements (
     FOREIGN KEY (course_id) REFERENCES courses(id) ON DELETE CASCADE
 );
 
--- Teacher Verifications Table
+
 CREATE TABLE teacher_verifications (
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
@@ -171,12 +168,11 @@ CREATE TABLE teacher_verifications (
     FOREIGN KEY (reviewed_by) REFERENCES users(id) ON DELETE SET NULL
 );
 -- Insert Demo Data
--- Password is 'password' hashed with password_hash()
 INSERT INTO users (username, email, password, full_name, role, student_id) VALUES
 ('admin', 'admin@learnhub.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Admin User', 'admin', NULL),
-('teacher1', 'teacher@learnhub.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Prof. Sarah Johnson', 'teacher', NULL),
-('student1', 'student@learnhub.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'John Student', 'student', 'STU001'),
-('student2', 'maria@learnhub.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Maria Lopez', 'student', 'STU002');
+('teacher1', 'teacher@learnhub.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Prof. John Doe', 'teacher', NULL),
+('student1', 'student@learnhub.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Jane Smith', 'student', 'STU001'),
+('student2', 'maria@learnhub.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Adam Lopez', 'student', 'STU002');
 
 -- Demo Courses
 INSERT INTO courses (teacher_id, course_code, course_name, description) VALUES
@@ -186,23 +182,6 @@ INSERT INTO courses (teacher_id, course_code, course_name, description) VALUES
 -- Enroll students in courses
 INSERT INTO enrollments (student_id, course_id) VALUES
 (3, 1), (3, 2), (4, 1), (4, 2);
-
--- Demo Assignment
-INSERT INTO assignments (course_id, title, description, due_date, total_points) VALUES
-(1, 'Database Design Project', 'Design a complete database schema for a library management system. Include ER diagram, normalized tables, and SQL statements.', DATE_ADD(NOW(), INTERVAL 7 DAY), 100),
-(1, 'SQL Practice', 'Complete the SQL exercises on the provided sample database.', DATE_ADD(NOW(), INTERVAL 14 DAY), 50);
-
--- Demo Quiz
-INSERT INTO quizzes (course_id, title, description, time_limit, total_points, due_date) VALUES
-(1, 'SQL Basics Quiz', 'Test your knowledge of basic SQL commands and syntax.', 20, 50, DATE_ADD(NOW(), INTERVAL 7 DAY));
-
--- Demo Quiz Questions
-INSERT INTO quiz_questions (quiz_id, question, option_a, option_b, option_c, option_d, correct_answer, points) VALUES
-(1, 'Which SQL statement is used to retrieve data from a database?', 'GET', 'SELECT', 'RETRIEVE', 'FETCH', 'B', 10),
-(1, 'Which SQL clause is used to filter records?', 'WHERE', 'FILTER', 'HAVING', 'LIMIT', 'A', 10),
-(1, 'Which SQL statement is used to insert new data?', 'ADD', 'INSERT INTO', 'UPDATE', 'CREATE', 'B', 10),
-(1, 'What does SQL stand for?', 'Strong Question Language', 'Structured Query Language', 'Simple Query Language', 'Standard Query Language', 'B', 10),
-(1, 'Which operator is used to search for a pattern?', 'SEARCH', 'FIND', 'LIKE', 'MATCH', 'C', 10);
 
 -- Demo Announcement
 INSERT INTO announcements (course_id, title, content) VALUES
