@@ -2,7 +2,6 @@
 $pageTitle = 'Login';
 require_once '../config/config.php';
 
-// Redirect if already logged in
 if (isLoggedIn()) {
     redirect('/' . $_SESSION['user_role'] . '/');
 }
@@ -40,13 +39,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= $pageTitle ?> - <?= SITE_NAME ?></title>
     
-    <!-- DNS Prefetch -->
     <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
     <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
     <link rel="dns-prefetch" href="https://fonts.googleapis.com">
     <link rel="dns-prefetch" href="https://fonts.gstatic.com">
     
-    <!-- Preconnect -->
     <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
     <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

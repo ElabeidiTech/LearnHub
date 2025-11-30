@@ -1,6 +1,5 @@
 <?php
 return [
-    // Navigation
     'home' => 'Accueil',
     'contact' => 'Contact',
     'about' => 'À propos',
@@ -13,18 +12,15 @@ return [
     'teacher_dashboard' => 'Tableau de bord enseignant',
     'my_learning' => 'Mon apprentissage',
     
-    // Hero Section
     'hero_title' => 'Système de gestion de l\'apprentissage complet',
     'hero_subtitle' => 'Plateforme puissante pour les établissements d\'enseignement afin de créer, gérer et dispenser des cours efficacement.',
     'create_course' => 'Créer un cours',
     'my_courses' => 'Mes cours',
     
-    // Stats
     'enrolled_students' => 'Étudiants inscrits',
     'courses_created' => 'Cours créés',
     'instructors' => 'Instructeurs',
     
-    // Features
     'features_title' => 'Tout ce dont vous avez besoin pour enseigner et apprendre',
     'assignments' => 'Devoirs',
     'assignments_desc' => 'Créez des devoirs avec des délais et des points. Les étudiants peuvent télécharger des fichiers et soumettre leur travail.',
@@ -37,18 +33,15 @@ return [
     'student_management' => 'Gestion des étudiants',
     'student_management_desc' => 'Inscription facile avec des codes de cours. Surveillez les progrès et la participation des étudiants.',
     'analytics' => 'Analytique',
-    'analytics_desc' => 'Consultez les statistiques des quiz, les taux de soumission et les performances de la classe en un coup d\'œil.',
+    'analytics_desc' => 'Consultez les statistiques des quiz, les taux de soumission et les performances de la classe en un coup d\'\u0153il.',
     
-    // Universities
     'trusted_by' => 'Approuvé par les principales universités canadiennes',
     
-    // Footer
     'quick_links' => 'Liens rapides',
     'connect' => 'Connecter',
     'all_rights_reserved' => 'Tous droits réservés',
     'simple_lms' => 'Système de gestion de l\'apprentissage simple',
     
-    // Login
     'welcome_back' => 'Bon retour!',
     'sign_in_continue' => 'Connectez-vous pour continuer à apprendre',
     'email_address' => 'Adresse e-mail',
@@ -60,7 +53,6 @@ return [
     'dont_have_account' => "Vous n'avez pas de compte?",
     'sign_up' => 'S\'inscrire',
     
-    // Register
     'create_account' => 'Créer un compte',
     'start_learning_journey' => 'Commencez votre parcours d\'apprentissage aujourd\'hui',
     'full_name' => 'Nom complet',
@@ -73,7 +65,6 @@ return [
     'privacy_policy' => 'Politique de confidentialité',
     'already_have_account' => 'Vous avez déjà un compte?',
     
-    // Contact
     'contact_us' => 'Contactez-nous',
     'contact_subtitle' => 'Des questions? Nous serions ravis de vous entendre.',
     'email' => 'E-mail',
@@ -84,7 +75,6 @@ return [
     'message' => 'Message',
     'send_message' => 'Envoyer le message',
     
-    // About
     'about_us' => 'À propos de nous',
     'about_subtitle' => 'Responsabiliser l\'éducation grâce à des solutions innovantes de gestion de l\'apprentissage.',
     'our_mission' => 'Notre mission',
@@ -104,7 +94,6 @@ return [
     'join_educators' => 'Rejoignez des milliers d\'éducateurs et d\'étudiants utilisant déjà LearnHub.',
     'get_started_today' => 'Commencer aujourd\'hui',
     
-    // Teacher Dashboard
     'welcome' => 'Bienvenue',
     'total_students' => 'Total des étudiants',
     'pending_grades' => 'Notes en attente',

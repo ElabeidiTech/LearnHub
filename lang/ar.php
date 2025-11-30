@@ -1,6 +1,5 @@
 <?php
 return [
-    // Navigation
     'home' => 'الرئيسية',
     'contact' => 'اتصل بنا',
     'about' => 'من نحن',
@@ -13,18 +12,15 @@ return [
     'teacher_dashboard' => 'لوحة تحكم المعلم',
     'my_learning' => 'تعلمي',
     
-    // Hero Section
     'hero_title' => 'نظام إدارة التعلم الكامل',
     'hero_subtitle' => 'منصة قوية للمؤسسات التعليمية لإنشاء وإدارة وتقديم الدورات بكفاءة.',
     'create_course' => 'إنشاء دورة',
     'my_courses' => 'دوراتي',
     
-    // Stats
     'enrolled_students' => 'الطلاب المسجلين',
     'courses_created' => 'الدورات المنشأة',
     'instructors' => 'المدرسون',
     
-    // Features
     'features_title' => 'كل ما تحتاجه للتدريس والتعلم',
     'assignments' => 'المهام',
     'assignments_desc' => 'إنشاء مهام بمواعيد نهائية ونقاط. يمكن للطلاب تحميل الملفات وتقديم أعمالهم.',
@@ -39,16 +35,13 @@ return [
     'analytics' => 'التحليلات',
     'analytics_desc' => 'عرض إحصائيات الاختبارات ومعدلات التقديم وأداء الفصل في لمحة.',
     
-    // Universities
     'trusted_by' => 'موثوق به من قبل الجامعات الكندية الرائدة',
     
-    // Footer
     'quick_links' => 'روابط سريعة',
     'connect' => 'اتصل',
     'all_rights_reserved' => 'جميع الحقوق محفوظة',
     'simple_lms' => 'نظام إدارة التعلم البسيط',
     
-    // Login
     'welcome_back' => 'مرحباً بعودتك!',
     'sign_in_continue' => 'سجل الدخول لمواصلة التعلم',
     'email_address' => 'عنوان البريد الإلكتروني',
@@ -60,7 +53,6 @@ return [
     'dont_have_account' => 'ليس لديك حساب؟',
     'sign_up' => 'سجل',
     
-    // Register
     'create_account' => 'إنشاء حساب',
     'start_learning_journey' => 'ابدأ رحلة التعلم الخاصة بك اليوم',
     'full_name' => 'الاسم الكامل',
@@ -73,7 +65,6 @@ return [
     'privacy_policy' => 'سياسة الخصوصية',
     'already_have_account' => 'هل لديك حساب بالفعل؟',
     
-    // Contact
     'contact_us' => 'اتصل بنا',
     'contact_subtitle' => 'لديك أسئلة؟ نحن نحب أن نسمع منك.',
     'email' => 'البريد الإلكتروني',
@@ -84,7 +75,6 @@ return [
     'message' => 'الرسالة',
     'send_message' => 'إرسال الرسالة',
     
-    // About
     'about_us' => 'من نحن',
     'about_subtitle' => 'تمكين التعليم من خلال حلول إدارة التعلم المبتكرة.',
     'our_mission' => 'مهمتنا',
@@ -104,7 +94,6 @@ return [
     'join_educators' => 'انضم إلى آلاف المعلمين والطلاب الذين يستخدمون LearnHub بالفعل.',
     'get_started_today' => 'ابدأ اليوم',
     
-    // Teacher Dashboard
     'welcome' => 'مرحبا',
     'total_students' => 'إجمالي الطلاب',
     'pending_grades' => 'الدرجات المعلقة',

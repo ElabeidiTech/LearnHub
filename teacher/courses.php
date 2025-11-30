@@ -1,21 +1,19 @@
 <?php
 require_once '../config/config.php';
-requireRole('teacher');
+requireApprovedTeacher();
 
 $pageTitle = 'My Courses';
 $user = getCurrentUser();
 
-// Handle course creation
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     if ($_POST['action'] === 'create') {
-        $courseCode = trim($_POST['course_code'] ?? '');
-        $courseName = trim($_POST['course_name'] ?? '');
+        $courseCode = strtoupper(trim($_POST['course_code'] ?? ''));
+        $courseName = strtoupper(trim($_POST['course_name'] ?? ''));
         $description = trim($_POST['description'] ?? '');
         
         if (empty($courseCode) || empty($courseName)) {
             setFlash('danger', 'Please fill in all required fields.');
         } else {
-            // Check if course code exists
             $stmt = $pdo->prepare("SELECT id FROM courses WHERE course_code = ?");
             $stmt->execute([$courseCode]);
             
@@ -38,7 +36,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     exit;
 }
 
-// Get teacher's courses
 $stmt = $pdo->prepare("
     SELECT c.*,
            (SELECT COUNT(*) FROM enrollments WHERE course_id = c.id) as student_count,
@@ -80,37 +77,39 @@ include '../includes/header.php';
                 $color = $colors[$index % count($colors)];
             ?>
                 <div class="col-md-6 col-lg-4">
-                    <div class="card border-0 shadow-sm h-100">
-                        <div class="p-4 text-white" style="background: <?= $color ?>;">
-                            <div class="d-flex justify-content-between align-items-center mb-3">
-                                <i class="fas fa-book fa-2x"></i>
-                                <form method="POST" class="d-inline" onsubmit="return confirm('Delete this course? All assignments, quizzes, and enrollments will be removed.');">
-                                    <input type="hidden" name="action" value="delete">
-                                    <input type="hidden" name="course_id" value="<?= $course['id'] ?>">
-                                    <button type="submit" class="btn btn-sm text-white" style="background: rgba(255,255,255,0.2); border: none;">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </form>
+                    <div class="card border-0 shadow-sm h-100 course-card-hover" onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
+                        <a href="course-details.php?id=<?= $course['id'] ?>" class="text-decoration-none text-dark">
+                            <div class="p-4 text-white" style="background: <?= $color ?>;">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <i class="fas fa-book fa-2x"></i>
+                                    <form method="POST" class="d-inline" id="deleteCourseForm<?= $course['id'] ?>" onclick="event.stopPropagation();">
+                                        <input type="hidden" name="action" value="delete">
+                                        <input type="hidden" name="course_id" value="<?= $course['id'] ?>">
+                                        <button type="button" class="btn btn-sm text-white" style="background: rgba(255,255,255,0.2); border: none;" onclick="event.preventDefault(); event.stopPropagation(); showConfirm('Delete this course? All assignments, quizzes, and enrollments will be removed. This action cannot be undone.', function() { document.getElementById('deleteCourseForm<?= $course['id'] ?>').submit(); }, 'Delete Course')">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                                <h3 class="mb-0"><?= sanitize($course['course_code']) ?></h3>
                             </div>
-                            <h3 class="mb-0"><?= sanitize($course['course_code']) ?></h3>
-                        </div>
-                        <div class="card-body">
-                            <h5 class="mb-2"><?= sanitize($course['course_name']) ?></h5>
-                            <p class="text-muted small mb-3">
-                                <?= $course['description'] ? sanitize(substr($course['description'], 0, 100)) . '...' : 'No description' ?>
-                            </p>
-                            
-                            <div class="d-flex gap-2 flex-wrap mb-3">
-                                <span class="badge bg-primary"><?= $course['student_count'] ?> Students</span>
-                                <span class="badge bg-warning text-dark"><?= $course['assignment_count'] ?> Assignments</span>
-                                <span class="badge bg-info text-dark"><?= $course['quiz_count'] ?> Quizzes</span>
-                            </div>
-                            
-                            <div class="bg-light p-3 rounded text-center">
-                                <small class="text-muted d-block mb-1">Share this code with students:</small>
+                            <div class="card-body">
+                                <h5 class="mb-2"><?= sanitize($course['course_name']) ?></h5>
+                                <p class="text-muted small mb-3">
+                                    <?= $course['description'] ? sanitize(substr($course['description'], 0, 100)) . '...' : 'No description' ?>
+                                </p>
+                                
+                                <div class="d-flex gap-2 flex-wrap mb-3">
+                                    <span class="badge bg-primary"><?= $course['student_count'] ?> Students</span>
+                                    <span class="badge bg-warning text-dark"><?= $course['assignment_count'] ?> Assignments</span>
+                                    <span class="badge bg-info text-dark"><?= $course['quiz_count'] ?> Quizzes</span>
+                                </div>
+                                
+                                <div class="bg-light p-3 rounded text-center">
+                                    <small class="text-muted d-block mb-1">Share this code with students:</small>
                                 <strong class="fs-5 text-primary"><?= sanitize($course['course_code']) ?></strong>
                             </div>
                         </div>
+                        </a>
                     </div>
                 </div>
             <?php endforeach; ?>
@@ -118,7 +117,7 @@ include '../includes/header.php';
     <?php endif; ?>
 </div>
 
-<!-- Create Course Modal -->
+
 <div class="modal fade" id="createModal" tabindex="-1" aria-labelledby="createModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">

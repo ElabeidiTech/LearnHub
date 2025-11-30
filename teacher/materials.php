@@ -1,32 +1,27 @@
 <?php
 require_once '../config/config.php';
-requireRole('teacher');
+requireApprovedTeacher();
 
 $pageTitle = 'Course Materials';
 $user = getCurrentUser();
 
-// Get teacher's courses
 $stmt = $pdo->prepare("SELECT * FROM courses WHERE teacher_id = ? ORDER BY course_code");
 $stmt->execute([$user['id']]);
 $courses = $stmt->fetchAll();
 
-// Handle file upload
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['action']) && $_POST['action'] === 'delete') {
         $materialId = $_POST['material_id'] ?? 0;
         
-        // Get file path before deleting
         $stmt = $pdo->prepare("SELECT m.file_path FROM materials m JOIN courses c ON m.course_id = c.id WHERE m.id = ? AND c.teacher_id = ?");
         $stmt->execute([$materialId, $user['id']]);
         $material = $stmt->fetch();
         
         if ($material) {
-            // Delete file
             if (file_exists(UPLOAD_PATH . $material['file_path'])) {
                 unlink(UPLOAD_PATH . $material['file_path']);
             }
             
-            // Delete record
             $stmt = $pdo->prepare("DELETE FROM materials WHERE id = ?");
             $stmt->execute([$materialId]);
             setFlash('success', 'Material deleted successfully.');
@@ -47,18 +42,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if ($file['size'] > getMaxFileSize()) {
                 setFlash('danger', 'File too large. Maximum size: 10MB');
             } else {
-                // Verify course belongs to teacher
                 $stmt = $pdo->prepare("SELECT id FROM courses WHERE id = ? AND teacher_id = ?");
                 $stmt->execute([$courseId, $user['id']]);
                 
                 if ($stmt->fetch()) {
-                    // Create upload directory
                     $uploadDir = UPLOAD_PATH . 'materials/' . $courseId . '/';
                     if (!is_dir($uploadDir)) {
                         mkdir($uploadDir, 0755, true);
                     }
                     
-                    // Generate unique filename
                     $fileName = $file['name'];
                     $uniqueName = time() . '_' . preg_replace('/[^a-zA-Z0-9._-]/', '', $fileName);
                     $filePath = 'materials/' . $courseId . '/' . $uniqueName;
@@ -79,7 +71,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     exit;
 }
 
-// Get all materials for teacher's courses
 $stmt = $pdo->prepare("
     SELECT m.*, c.course_code, c.course_name
     FROM materials m
@@ -144,10 +135,10 @@ include '../includes/header.php';
                                 <a href="<?= SITE_URL ?>/api/download.php?id=<?= $material['id'] ?>" class="btn btn-outline-primary btn-sm">
                                     <i class="fas fa-download"></i>
                                 </a>
-                                <form method="POST" style="display: inline;" onsubmit="return confirm('<?= __('confirm_delete') ?>');">
+                                <form method="POST" style="display: inline;" id="deleteMaterialForm<?= $material['id'] ?>">
                                     <input type="hidden" name="action" value="delete">
                                     <input type="hidden" name="material_id" value="<?= $material['id'] ?>">
-                                    <button type="submit" class="btn btn-outline-danger btn-sm">
+                                    <button type="button" class="btn btn-outline-danger btn-sm" onclick="showConfirm('<?= __('confirm_delete') ?>', function() { document.getElementById('deleteMaterialForm<?= $material['id'] ?>').submit(); }, 'Delete Material')">
                                         <i class="fas fa-trash"></i>
                                     </button>
                                 </form>
@@ -160,7 +151,7 @@ include '../includes/header.php';
     </div>
 </div>
 
-<!-- Upload Modal -->
+
 <div class="modal fade" id="uploadModal" tabindex="-1" aria-labelledby="uploadModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">

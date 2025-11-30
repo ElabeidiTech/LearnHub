@@ -1,11 +1,10 @@
 <?php
 require_once '../config/config.php';
-requireRole('teacher');
+requireApprovedTeacher();
 
 $pageTitle = 'Quizzes';
 $user = getCurrentUser();
 
-// Handle delete
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_id'])) {
     $stmt = $pdo->prepare("DELETE FROM quizzes WHERE id = ? AND course_id IN (SELECT id FROM courses WHERE teacher_id = ?)");
     $stmt->execute([$_POST['delete_id'], $user['id']]);
@@ -14,7 +13,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_id'])) {
     exit;
 }
 
-// Get all quizzes for teacher's courses
 $stmt = $pdo->prepare("
     SELECT q.*, c.course_code, c.course_name,
            (SELECT COUNT(*) FROM quiz_questions WHERE quiz_id = q.id) as question_count,
@@ -82,9 +80,9 @@ include '../includes/header.php';
                                 <a href="view-quiz-results.php?id=<?= $quiz['id'] ?>" class="btn btn-outline-primary btn-sm" title="<?= __('view_results') ?>">
                                     <i class="fas fa-chart-bar"></i>
                                 </a>
-                                <form method="POST" style="display: inline;" onsubmit="return confirm('<?= __('confirm_delete') ?>');">
+                                <form method="POST" style="display: inline;" id="deleteQuizForm<?= $quiz['id'] ?>">
                                     <input type="hidden" name="delete_id" value="<?= $quiz['id'] ?>">
-                                    <button type="submit" class="btn btn-outline-danger btn-sm" title="<?= __('delete') ?>">
+                                    <button type="button" class="btn btn-outline-danger btn-sm" title="<?= __('delete') ?>" onclick="showConfirm('<?= __('confirm_delete') ?>', function() { document.getElementById('deleteQuizForm<?= $quiz['id'] ?>').submit(); }, 'Delete Quiz')">
                                         <i class="fas fa-trash"></i>
                                     </button>
                                 </form>

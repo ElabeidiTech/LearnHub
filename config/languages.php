@@ -3,12 +3,10 @@
  * Language Configuration and Translation System
  */
 
-// Start session if not already started
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// Available languages
 define('AVAILABLE_LANGUAGES', [
     'en' => ['name' => 'English', 'flag' => ''],
     'fr' => ['name' => 'Français', 'flag' => ''],
@@ -17,23 +15,18 @@ define('AVAILABLE_LANGUAGES', [
     'de' => ['name' => 'Deutsch', 'flag' => '']
 ]);
 
-// Set default language
 if (!isset($_SESSION['language'])) {
     $_SESSION['language'] = 'en';
 }
 
-// Change language if requested
 if (isset($_GET['lang']) && array_key_exists($_GET['lang'], AVAILABLE_LANGUAGES)) {
     $_SESSION['language'] = $_GET['lang'];
-    // Redirect to remove lang parameter from URL
     header('Location: ' . strtok($_SERVER['REQUEST_URI'], '?'));
     exit;
 }
 
-// Get current language
 $currentLanguage = $_SESSION['language'];
 
-// Load translation file
 $translationFile = __DIR__ . '/../lang/' . $currentLanguage . '.php';
 if (file_exists($translationFile)) {
     $translations = require $translationFile;
@@ -42,7 +35,10 @@ if (file_exists($translationFile)) {
 }
 
 /**
- * Translate function
+ * Translate a key to the current language
+ * 
+ * @param string $key The translation key
+ * @return string The translated string or the key if translation not found
  */
 function __($key) {
     global $translations;
@@ -50,14 +46,19 @@ function __($key) {
 }
 
 /**
- * Get current language
+ * Get the current active language code
+ * 
+ * @return string Language code (e.g., 'en', 'fr', 'ar')
  */
 function getCurrentLanguage() {
     return $_SESSION['language'] ?? 'en';
 }
 
 /**
- * Get language direction (for RTL languages like Arabic)
+ * Get language direction for current language
+ * Used for RTL (Right-to-Left) language support like Arabic
+ * 
+ * @return string 'rtl' for RTL languages, 'ltr' for LTR languages
  */
 function getLanguageDirection() {
     $rtlLanguages = ['ar'];
@@ -65,7 +66,10 @@ function getLanguageDirection() {
 }
 
 /**
- * Display and clear flash message (wrapper for compatibility)
+ * Display and clear flash message
+ * Returns HTML for Bootstrap alert component
+ * 
+ * @return string HTML for flash message or empty string if no message
  */
 function flashMessage() {
     $flash = getFlash();

@@ -1,11 +1,10 @@
 <?php
 require_once '../config/config.php';
-requireRole('teacher');
+requireApprovedTeacher();
 
 $user = getCurrentUser();
 $quizId = $_GET['id'] ?? 0;
 
-// Get quiz details
 $stmt = $pdo->prepare("
     SELECT q.*, c.course_code, c.course_name
     FROM quizzes q
@@ -23,7 +22,6 @@ if (!$quiz) {
 
 $pageTitle = 'Results: ' . $quiz['title'];
 
-// Get quiz attempts
 $stmt = $pdo->prepare("
     SELECT qa.*, u.full_name as student_name, u.email as student_email
     FROM quiz_attempts qa
@@ -34,13 +32,11 @@ $stmt = $pdo->prepare("
 $stmt->execute([$quizId]);
 $attempts = $stmt->fetchAll();
 
-// Get statistics
 $totalAttempts = count($attempts);
 $avgScore = $totalAttempts > 0 ? array_sum(array_column($attempts, 'score')) / $totalAttempts : 0;
 $highestScore = $totalAttempts > 0 ? max(array_column($attempts, 'score')) : 0;
 $lowestScore = $totalAttempts > 0 ? min(array_column($attempts, 'score')) : 0;
 
-// Get questions for analysis
 $stmt = $pdo->prepare("
     SELECT qq.*, 
            (SELECT COUNT(*) FROM quiz_answers qa 
@@ -72,7 +68,7 @@ include '../includes/header.php';
         <span class="badge bg-primary fs-6"><?= sanitize($quiz['course_code']) ?></span>
     </div>
 
-    <!-- Statistics -->
+    
     <div class="row g-4 mb-4">
         <div class="col-md-3">
             <div class="card text-center h-100 border-0 shadow-sm">
@@ -121,7 +117,7 @@ include '../includes/header.php';
     </div>
 
     <div class="row g-4">
-        <!-- Student Results -->
+        
         <div class="col-lg-6">
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-header bg-white border-0 py-3">
@@ -178,7 +174,7 @@ include '../includes/header.php';
             </div>
         </div>
 
-        <!-- Question Analysis -->
+        
         <div class="col-lg-6">
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-header bg-white border-0 py-3">

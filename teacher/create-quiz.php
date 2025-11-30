@@ -1,11 +1,10 @@
 <?php
 require_once '../config/config.php';
-requireRole('teacher');
+requireApprovedTeacher();
 
 $pageTitle = 'Create Quiz';
 $user = getCurrentUser();
 
-// Get teacher's courses
 $stmt = $pdo->prepare("SELECT * FROM courses WHERE teacher_id = ? ORDER BY course_code");
 $stmt->execute([$user['id']]);
 $courses = $stmt->fetchAll();
@@ -17,6 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $title = trim($_POST['title'] ?? '');
     $description = trim($_POST['description'] ?? '');
     $timeLimit = intval($_POST['time_limit'] ?? 30);
+    $maxAttempts = intval($_POST['max_attempts'] ?? 1);
     $dueDate = $_POST['due_date'] ?? '';
     $dueTime = $_POST['due_time'] ?? '23:59';
     $questions = $_POST['questions'] ?? [];
@@ -26,7 +26,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } elseif (empty($questions)) {
         $error = 'Please add at least one question.';
     } else {
-        // Verify course belongs to teacher
         $stmt = $pdo->prepare("SELECT id FROM courses WHERE id = ? AND teacher_id = ?");
         $stmt->execute([$courseId, $user['id']]);
         
@@ -35,18 +34,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             $dueDatetime = $dueDate . ' ' . $dueTime . ':00';
             
-            // Calculate total points
             $totalPoints = 0;
             foreach ($questions as $q) {
                 $totalPoints += intval($q['points'] ?? 10);
             }
             
-            // Create quiz
-            $stmt = $pdo->prepare("INSERT INTO quizzes (course_id, title, description, time_limit, total_points, due_date) VALUES (?, ?, ?, ?, ?, ?)");
-            $stmt->execute([$courseId, $title, $description, $timeLimit, $totalPoints, $dueDatetime]);
+            $stmt = $pdo->prepare("INSERT INTO quizzes (course_id, title, description, time_limit, max_attempts, total_points, due_date) VALUES (?, ?, ?, ?, ?, ?, ?)");
+            $stmt->execute([$courseId, $title, $description, $timeLimit, $maxAttempts, $totalPoints, $dueDatetime]);
             $quizId = $pdo->lastInsertId();
             
-            // Add questions
             $stmt = $pdo->prepare("INSERT INTO quiz_questions (quiz_id, question, option_a, option_b, option_c, option_d, correct_answer, points) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
             
             foreach ($questions as $q) {
@@ -105,7 +101,7 @@ include '../includes/header.php';
     <?php endif; ?>
 
     <form method="POST" id="quizForm">
-        <!-- Quiz Settings -->
+        
         <div class="card border-0 shadow-sm mb-4">
             <div class="card-header bg-white border-0 py-3">
                 <h5 class="mb-0"><i class="fas fa-cog text-primary <?= getLanguageDirection() === 'rtl' ? 'ms-2' : 'me-2' ?>"></i><?= __('quiz_settings') ?></h5>
@@ -136,17 +132,31 @@ include '../includes/header.php';
                 </div>
 
                 <div class="row g-3">
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <label class="form-label"><?= __('time_limit') ?> (<?= __('minutes') ?>)</label>
                         <input type="number" name="time_limit" class="form-control" value="30" min="5" max="180">
                     </div>
                     
-                    <div class="col-md-4">
+                    <div class="col-md-3">
+                        <label class="form-label">
+                            <i class="fas fa-redo text-primary <?= getLanguageDirection() === 'rtl' ? 'ms-1' : 'me-1' ?>"></i>
+                            Max Attempts
+                        </label>
+                        <select name="max_attempts" class="form-select">
+                            <option value="1">1 Attempt</option>
+                            <option value="2">2 Attempts</option>
+                            <option value="3">3 Attempts</option>
+                            <option value="5">5 Attempts</option>
+                            <option value="-1">Unlimited</option>
+                        </select>
+                    </div>
+                    
+                    <div class="col-md-3">
                         <label class="form-label"><?= __('due_date') ?> *</label>
                         <input type="date" name="due_date" class="form-control" value="<?= date('Y-m-d', strtotime('+7 days')) ?>" required>
                     </div>
                     
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <label class="form-label"><?= __('due_time') ?></label>
                         <input type="time" name="due_time" class="form-control" value="23:59">
                     </div>
@@ -154,18 +164,18 @@ include '../includes/header.php';
             </div>
         </div>
 
-        <!-- Questions -->
+        
         <div class="card border-0 shadow-sm mb-4">
             <div class="card-header bg-white border-0 py-3 d-flex justify-content-between align-items-center">
                 <h5 class="mb-0"><i class="fas fa-list text-primary <?= getLanguageDirection() === 'rtl' ? 'ms-2' : 'me-2' ?>"></i><?= __('questions') ?></h5>
                 <span class="badge bg-primary" id="questionCount">0 <?= __('questions') ?> • 0 <?= __('points') ?></span>
             </div>
             <div class="card-body" id="questionsContainer">
-                <!-- Questions will be added here -->
+                
             </div>
         </div>
 
-        <!-- Add Question Button -->
+        
         <div class="card mb-4 border-2 border-dashed" style="border-color: #cbd5e1; background: #f8fafc;">
             <div class="card-body text-center py-4">
                 <button type="button" class="btn btn-primary btn-lg" onclick="addQuestion()">
@@ -246,11 +256,9 @@ function addQuestion() {
     const template = document.getElementById('questionTemplate').content.cloneNode(true);
     const card = template.querySelector('.question-card');
     
-    // Set question number
     card.querySelector('.q-number').textContent = questionCount;
     card.dataset.questionId = questionCount;
     
-    // Set field names
     const idx = questionCount - 1;
     card.querySelector('.question-text').name = `questions[${idx}][question]`;
     card.querySelector('.points-input').name = `questions[${idx}][points]`;
@@ -259,7 +267,6 @@ function addQuestion() {
     card.querySelector('.option-c').name = `questions[${idx}][option_c]`;
     card.querySelector('.option-d').name = `questions[${idx}][option_d]`;
     
-    // Set radio names and hidden field for correct answer
     const radios = card.querySelectorAll('.correct-radio');
     const radioName = `correct_${questionCount}`;
     radios.forEach(radio => {
@@ -280,7 +287,6 @@ function addQuestion() {
 
 function removeQuestion(btn) {
     btn.closest('.question-card').remove();
-    // Renumber questions
     document.querySelectorAll('.question-card').forEach((card, index) => {
         card.querySelector('.q-number').textContent = index + 1;
     });
@@ -296,15 +302,17 @@ function updateQuestionCount() {
     document.getElementById('questionCount').textContent = `${questionCount} <?= __('questions') ?> • ${totalPoints} <?= __('points') ?>`;
 }
 
-// Listen for points changes
 document.getElementById('questionsContainer').addEventListener('input', function(e) {
     if (e.target.classList.contains('points-input')) {
         updateQuestionCount();
     }
 });
 
-// Add first question by default
-addQuestion();
+document.addEventListener('DOMContentLoaded', function() {
+    if (typeof addQuestion === 'function') {
+        addQuestion();
+    }
+});
 </script>
 
 <?php endif; ?>

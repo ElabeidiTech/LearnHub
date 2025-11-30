@@ -1,6 +1,5 @@
 <?php
 return [
-    // Navigation
     'home' => 'Home',
     'contact' => 'Contact',
     'about' => 'About',
@@ -13,18 +12,15 @@ return [
     'teacher_dashboard' => 'Teacher Dashboard',
     'my_learning' => 'My Learning',
     
-    // Hero Section
     'hero_title' => 'Complete Learning Management System',
     'hero_subtitle' => 'Powerful platform for educational institutions to create, manage, and deliver courses efficiently.',
     'create_course' => 'Create Course',
     'my_courses' => 'My Courses',
     
-    // Stats
     'enrolled_students' => 'Enrolled Students',
     'courses_created' => 'Courses Created',
     'instructors' => 'Instructors',
     
-    // Features
     'features_title' => 'Everything You Need to Teach & Learn',
     'assignments' => 'Assignments',
     'assignments_desc' => 'Create assignments with deadlines and point values. Students can upload files and submit their work.',
@@ -39,16 +35,13 @@ return [
     'analytics' => 'Analytics',
     'analytics_desc' => 'View quiz statistics, submission rates, and class performance at a glance.',
     
-    // Universities
     'trusted_by' => 'Trusted by Leading Canadian Universities',
     
-    // Footer
     'quick_links' => 'Quick Links',
     'connect' => 'Connect',
     'all_rights_reserved' => 'All rights reserved',
     'simple_lms' => 'Simple Learning Management System',
     
-    // Login
     'welcome_back' => 'Welcome Back!',
     'sign_in_continue' => 'Sign in to continue learning',
     'email_address' => 'Email Address',
@@ -60,7 +53,6 @@ return [
     'dont_have_account' => "Don't have an account?",
     'sign_up' => 'Sign Up',
     
-    // Register
     'create_account' => 'Create Account',
     'start_learning_journey' => 'Start your learning journey today',
     'full_name' => 'Full Name',
@@ -73,7 +65,6 @@ return [
     'privacy_policy' => 'Privacy Policy',
     'already_have_account' => 'Already have an account?',
     
-    // Contact
     'contact_us' => 'Contact Us',
     'contact_subtitle' => "Have questions? We'd love to hear from you.",
     'email' => 'Email',
@@ -84,7 +75,6 @@ return [
     'message' => 'Message',
     'send_message' => 'Send Message',
     
-    // About
     'about_us' => 'About Us',
     'about_subtitle' => 'Empowering education through innovative learning management solutions.',
     'our_mission' => 'Our Mission',
@@ -104,7 +94,6 @@ return [
     'join_educators' => 'Join thousands of educators and students already using LearnHub.',
     'get_started_today' => 'Get Started Today',
     
-    // Teacher Dashboard
     'welcome' => 'Welcome',
     'total_students' => 'Total Students',
     'pending_grades' => 'Pending Grades',

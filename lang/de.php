@@ -1,6 +1,5 @@
 <?php
 return [
-    // Navigation
     'home' => 'Startseite',
     'contact' => 'Kontakt',
     'about' => 'Über uns',
@@ -13,18 +12,15 @@ return [
     'teacher_dashboard' => 'Lehrer-Dashboard',
     'my_learning' => 'Mein Lernen',
     
-    // Hero Section
     'hero_title' => 'Komplettes Lernmanagementsystem',
     'hero_subtitle' => 'Leistungsstarke Plattform für Bildungseinrichtungen zum effizienten Erstellen, Verwalten und Bereitstellen von Kursen.',
     'create_course' => 'Kurs erstellen',
     'my_courses' => 'Meine Kurse',
     
-    // Stats
     'enrolled_students' => 'Eingeschriebene Studenten',
     'courses_created' => 'Erstellte Kurse',
     'instructors' => 'Dozenten',
     
-    // Features
     'features_title' => 'Alles, was Sie zum Lehren und Lernen brauchen',
     'assignments' => 'Aufgaben',
     'assignments_desc' => 'Erstellen Sie Aufgaben mit Fristen und Punktwerten. Studenten können Dateien hochladen und ihre Arbeit einreichen.',
@@ -39,16 +35,13 @@ return [
     'analytics' => 'Analytik',
     'analytics_desc' => 'Sehen Sie Quiz-Statistiken, Einreichungsraten und Klassenleistung auf einen Blick.',
     
-    // Universities
     'trusted_by' => 'Vertraut von führenden kanadischen Universitäten',
     
-    // Footer
     'quick_links' => 'Schnelle Links',
     'connect' => 'Verbinden',
     'all_rights_reserved' => 'Alle Rechte vorbehalten',
     'simple_lms' => 'Einfaches Lernmanagementsystem',
     
-    // Login
     'welcome_back' => 'Willkommen zurück!',
     'sign_in_continue' => 'Melden Sie sich an, um weiter zu lernen',
     'email_address' => 'E-Mail-Adresse',
@@ -60,7 +53,6 @@ return [
     'dont_have_account' => 'Noch kein Konto?',
     'sign_up' => 'Registrieren',
     
-    // Register
     'create_account' => 'Konto erstellen',
     'start_learning_journey' => 'Beginnen Sie Ihre Lernreise heute',
     'full_name' => 'Vollständiger Name',
@@ -73,7 +65,6 @@ return [
     'privacy_policy' => 'Datenschutzrichtlinie',
     'already_have_account' => 'Haben Sie bereits ein Konto?',
     
-    // Contact
     'contact_us' => 'Kontaktieren Sie uns',
     'contact_subtitle' => 'Fragen? Wir würden gerne von Ihnen hören.',
     'email' => 'E-Mail',
@@ -84,7 +75,6 @@ return [
     'message' => 'Nachricht',
     'send_message' => 'Nachricht senden',
     
-    // About
     'about_us' => 'Über uns',
     'about_subtitle' => 'Bildung durch innovative Lernmanagementlösungen stärken.',
     'our_mission' => 'Unsere Mission',
@@ -104,7 +94,6 @@ return [
     'join_educators' => 'Schließen Sie sich Tausenden von Pädagogen und Studenten an, die bereits LearnHub verwenden.',
     'get_started_today' => 'Heute beginnen',
     
-    // Teacher Dashboard
     'welcome' => 'Willkommen',
     'total_students' => 'Gesamtzahl Studenten',
     'pending_grades' => 'Ausstehende Noten',

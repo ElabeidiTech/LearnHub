@@ -1,11 +1,10 @@
 <?php
 require_once '../config/config.php';
-requireRole('teacher');
+requireApprovedTeacher();
 
 $pageTitle = 'Students';
 $user = getCurrentUser();
 
-// Get all students enrolled in teacher's courses
 $stmt = $pdo->prepare("
     SELECT DISTINCT u.*, 
            GROUP_CONCAT(DISTINCT c.course_code ORDER BY c.course_code SEPARATOR ', ') as courses,
@@ -65,7 +64,7 @@ include '../includes/header.php';
                                 <tr>
                                     <td>
                                         <div class="d-flex align-items-center gap-2">
-                                            <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px; font-size: 0.85rem;">
+                                            <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center icon-circle-md">
                                                 <?= strtoupper(substr($student['full_name'], 0, 2)) ?>
                                             </div>
                                             <div>

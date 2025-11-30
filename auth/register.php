@@ -2,7 +2,6 @@
 $pageTitle = 'Register';
 require_once '../config/config.php';
 
-// Redirect if already logged in
 if (isLoggedIn()) {
     redirect('/' . $_SESSION['user_role'] . '/');
 }
@@ -17,7 +16,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $confirmPassword = $_POST['confirm_password'] ?? '';
     $role = $_POST['role'] ?? 'student';
     
-    // Validation
     if (empty($fullName) || empty($email) || empty($password) || empty($confirmPassword)) {
         $error = 'Please fill in all fields.';
     } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
@@ -29,23 +27,42 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } elseif (!in_array($role, ['student', 'teacher'])) {
         $error = 'Invalid role selected.';
     } else {
-        // Check if email already exists
         $stmt = $pdo->prepare("SELECT id FROM users WHERE email = ?");
         $stmt->execute([$email]);
         
         if ($stmt->fetch()) {
             $error = 'An account with this email already exists.';
         } else {
-            // Create user
             $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
             
-            $stmt = $pdo->prepare("INSERT INTO users (full_name, email, password, role) VALUES (?, ?, ?, ?)");
-            
-            if ($stmt->execute([$fullName, $email, $hashedPassword, $role])) {
-                $_SESSION['flash_success'] = 'Account created successfully! Please login.';
-                redirect('/auth/login.php');
+            if ($role === 'teacher') {
+                $stmt = $pdo->prepare("INSERT INTO users (full_name, email, password, role, status) VALUES (?, ?, ?, 'teacher', 'pending')");
+                
+                if ($stmt->execute([$fullName, $email, $hashedPassword])) {
+                    $_SESSION['flash_info'] = 'Your teacher account has been created and is pending admin approval. You will be notified once approved.';
+                    redirect('/auth/login.php');
+                } else {
+                    $error = 'Something went wrong. Please try again.';
+                }
             } else {
-                $error = 'Something went wrong. Please try again.';
+                $stmt = $pdo->prepare("INSERT INTO users (full_name, email, password, role, status) VALUES (?, ?, ?, ?, 'approved')");
+                
+                if ($stmt->execute([$fullName, $email, $hashedPassword, $role])) {
+                    $userId = $pdo->lastInsertId();
+                    $_SESSION['user_id'] = $userId;
+                    $_SESSION['user'] = [
+                        'id' => $userId,
+                        'full_name' => $fullName,
+                        'email' => $email,
+                        'role' => $role,
+                        'status' => 'approved'
+                    ];
+                    
+                    $_SESSION['flash_success'] = 'Account created successfully!';
+                    redirect('/student/');
+                } else {
+                    $error = 'Something went wrong. Please try again.';
+                }
             }
         }
     }
@@ -58,13 +75,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= $pageTitle ?> - <?= SITE_NAME ?></title>
     
-    <!-- DNS Prefetch -->
     <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
     <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
     <link rel="dns-prefetch" href="https://fonts.googleapis.com">
     <link rel="dns-prefetch" href="https://fonts.gstatic.com">
     
-    <!-- Preconnect -->
     <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
     <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -118,6 +133,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <span class="input-group-text"><i class="fas fa-lock"></i></span>
                             <input type="password" class="form-control" id="password" name="password" 
                                    minlength="6" required>
+                            <button class="btn btn-outline-secondary" type="button" onclick="togglePassword('password', this)">
+                                <i class="fas fa-eye"></i>
+                            </button>
                         </div>
                         <small id="password-strength" class="form-text"></small>
                     </div>
@@ -127,6 +145,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <div class="input-group">
                             <span class="input-group-text"><i class="fas fa-lock"></i></span>
                             <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
+                            <button class="btn btn-outline-secondary" type="button" onclick="togglePassword('confirm_password', this)">
+                                <i class="fas fa-eye"></i>
+                            </button>
                         </div>
                     </div>
                     

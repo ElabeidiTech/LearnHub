@@ -1,30 +1,20 @@
 <?php
 require_once '../config/config.php';
-requireLogin();
-
-// Check if user has teacher or admin role
-if (!hasRole('teacher') && !hasRole('admin')) {
-    setFlash('error', __('access_denied'));
-    redirect('/');
-}
+requireApprovedTeacher();
 
 $pageTitle = 'Dashboard';
 $user = getCurrentUser();
 
-// Initialize counts
 $coursesCount = 0;
 $studentsCount = 0;
 $pendingSubmissions = [];
 $recentQuizzes = [];
 
-// Only query database if available
 if ($pdo) {
-    // Get courses count
     $stmt = $pdo->prepare("SELECT COUNT(*) FROM courses WHERE teacher_id = ?");
     $stmt->execute([$user['id']]);
     $coursesCount = $stmt->fetchColumn();
 
-    // Get total students
     $stmt = $pdo->prepare("
         SELECT COUNT(DISTINCT e.student_id) 
         FROM enrollments e 
@@ -34,7 +24,6 @@ if ($pdo) {
     $stmt->execute([$user['id']]);
     $studentsCount = $stmt->fetchColumn();
 
-    // Get pending submissions to grade
     $stmt = $pdo->prepare("
         SELECT s.*, a.title as assignment_title, a.total_points, c.course_code, u.full_name as student_name
         FROM submissions s
@@ -48,7 +37,6 @@ if ($pdo) {
     $stmt->execute([$user['id']]);
     $pendingSubmissions = $stmt->fetchAll();
 
-    // Get recent quiz attempts
     $stmt = $pdo->prepare("
         SELECT qa.*, q.title as quiz_title, c.course_code, u.full_name as student_name
         FROM quiz_attempts qa
@@ -69,18 +57,20 @@ include '../includes/header.php';
 <div class="container my-5">
     <h2 class="mb-4"><?= __('welcome') ?>, <?= sanitize($user['full_name']) ?>!</h2>
 
-    <!-- Stats Cards -->
+    
     <div class="row g-4 mb-4">
         <div class="col-md-3">
-            <div class="card text-center h-100 border-0 shadow-sm">
-                <div class="card-body">
-                    <div class="mb-3">
-                        <i class="fas fa-book fa-3x text-primary"></i>
+            <a href="courses.php" class="text-decoration-none">
+                <div class="card text-center h-100 border-0 shadow-sm hover-shadow">
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <i class="fas fa-book fa-3x text-primary"></i>
+                        </div>
+                        <h3 class="fw-bold text-dark"><?= $coursesCount ?></h3>
+                        <p class="text-muted mb-0"><?= __('my_courses') ?></p>
                     </div>
-                    <h3 class="fw-bold"><?= $coursesCount ?></h3>
-                    <p class="text-muted mb-0"><?= __('my_courses') ?></p>
                 </div>
-            </div>
+            </a>
         </div>
         <div class="col-md-3">
             <div class="card text-center h-100 border-0 shadow-sm">
@@ -117,39 +107,36 @@ include '../includes/header.php';
         </div>
     </div>
 
-    <!-- Quick Actions -->
+    
     <div class="card mb-4 border-0 shadow-sm">
         <div class="card-header bg-white border-0 py-3">
             <h5 class="mb-0"><i class="fas fa-bolt text-warning <?= getLanguageDirection() === 'rtl' ? 'ms-2' : 'me-2' ?>"></i><?= __('quick_actions') ?></h5>
         </div>
         <div class="card-body">
             <div class="d-flex gap-2 flex-wrap">
-                <a href="create-assignment.php" class="btn btn-outline-primary">
-                    <i class="fas fa-plus <?= getLanguageDirection() === 'rtl' ? 'ms-1' : 'me-1' ?>"></i><?= __('new_assignment') ?>
+                <a href="create-assignment.php" class="btn btn-outline-primary d-flex align-items-center gap-2 quick-action-btn">
+                    <i class="fas fa-plus"></i><span><?= __('new_assignment') ?></span>
                 </a>
-                <a href="create-quiz.php" class="btn btn-outline-success">
-                    <i class="fas fa-plus <?= getLanguageDirection() === 'rtl' ? 'ms-1' : 'me-1' ?>"></i><?= __('new_quiz') ?>
+                <a href="create-quiz.php" class="btn btn-outline-success d-flex align-items-center gap-2 quick-action-btn">
+                    <i class="fas fa-plus"></i><span><?= __('new_quiz') ?></span>
                 </a>
-                <a href="materials.php" class="btn btn-outline-info">
-                    <i class="fas fa-upload <?= getLanguageDirection() === 'rtl' ? 'ms-1' : 'me-1' ?>"></i><?= __('upload_material') ?>
+                <a href="materials.php" class="btn btn-outline-secondary d-flex align-items-center gap-2 quick-action-btn">
+                    <i class="fas fa-upload"></i><span><?= __('upload_material') ?></span>
                 </a>
-                <a href="courses.php" class="btn btn-outline-primary">
-                    <i class="fas fa-book <?= getLanguageDirection() === 'rtl' ? 'ms-1' : 'me-1' ?>"></i><?= __('manage_courses') ?>
+                <a href="students.php" class="btn btn-outline-success d-flex align-items-center gap-2 quick-action-btn">
+                    <i class="fas fa-user-graduate"></i><span>View Students</span>
                 </a>
-                <a href="students.php" class="btn btn-outline-success">
-                    <i class="fas fa-user-graduate <?= getLanguageDirection() === 'rtl' ? 'ms-1' : 'me-1' ?>"></i><?= __('view_students') ?>
+                <a href="quizzes.php" class="btn btn-outline-primary d-flex align-items-center gap-2 quick-action-btn">
+                    <i class="fas fa-chart-bar"></i><span>Quiz Results</span>
                 </a>
-                <a href="quizzes.php" class="btn btn-outline-info">
-                    <i class="fas fa-chart-bar <?= getLanguageDirection() === 'rtl' ? 'ms-1' : 'me-1' ?>"></i><?= __('quiz_results') ?>
-                </a>
-                <a href="gradebook.php" class="btn btn-outline-warning">
-                    <i class="fas fa-star <?= getLanguageDirection() === 'rtl' ? 'ms-1' : 'me-1' ?>"></i><?= __('gradebook') ?>
+                <a href="gradebook.php" class="btn btn-outline-dark d-flex align-items-center gap-2 quick-action-btn">
+                    <i class="fas fa-graduation-cap"></i><span><?= __('gradebook') ?></span>
                 </a>
             </div>
         </div>
     </div>
 
-    <!-- Pending Submissions -->
+    
     <div class="card border-0 shadow-sm">
         <div class="card-header bg-white border-0 py-3 d-flex justify-content-between align-items-center">
             <h5 class="mb-0"><i class="fas fa-inbox text-warning <?= getLanguageDirection() === 'rtl' ? 'ms-2' : 'me-2' ?>"></i><?= __('submissions_to_grade') ?></h5>
@@ -178,7 +165,7 @@ include '../includes/header.php';
                                 <tr>
                                     <td>
                                         <div class="d-flex align-items-center gap-2">
-                                            <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 32px; height: 32px; font-size: 0.75rem;">
+                                            <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center icon-circle-sm">
                                                 <?= strtoupper(substr($submission['student_name'], 0, 2)) ?>
                                             </div>
                                             <span><?= sanitize($submission['student_name']) ?></span>

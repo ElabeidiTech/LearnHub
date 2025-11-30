@@ -1,11 +1,10 @@
 <?php
 require_once '../config/config.php';
-requireRole('teacher');
+requireApprovedTeacher();
 
 $pageTitle = 'Create Assignment';
 $user = getCurrentUser();
 
-// Get teacher's courses
 $stmt = $pdo->prepare("SELECT * FROM courses WHERE teacher_id = ? ORDER BY course_code");
 $stmt->execute([$user['id']]);
 $courses = $stmt->fetchAll();
@@ -23,14 +22,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (empty($courseId) || empty($title) || empty($dueDate)) {
         $error = 'Please fill in all required fields.';
     } else {
-        // Verify course belongs to teacher
         $stmt = $pdo->prepare("SELECT id FROM courses WHERE id = ? AND teacher_id = ?");
         $stmt->execute([$courseId, $user['id']]);
         
         if (!$stmt->fetch()) {
             $error = 'Invalid course selected.';
         } else {
-            // Handle file upload
             $fileName = null;
             $filePath = null;
             
@@ -41,13 +38,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 if ($file['size'] > getMaxFileSize()) {
                     $error = 'File too large. Maximum size: 10MB';
                 } else {
-                    // Create upload directory
                     $uploadDir = UPLOAD_PATH . 'assignments/' . $courseId . '/';
                     if (!is_dir($uploadDir)) {
                         mkdir($uploadDir, 0755, true);
                     }
                     
-                    // Generate unique filename
                     $fileName = $file['name'];
                     $uniqueName = time() . '_' . preg_replace('/[^a-zA-Z0-9._-]/', '', $fileName);
                     $filePath = 'assignments/' . $courseId . '/' . $uniqueName;
@@ -133,7 +128,7 @@ include '../includes/header.php';
                     <textarea name="description" class="form-control" rows="5" placeholder="Enter assignment instructions..."><?= sanitize($_POST['description'] ?? '') ?></textarea>
                 </div>
 
-                <!-- File Upload Section -->
+                
                 <div class="mb-3">
                     <label class="form-label fw-semibold"><i class="fas fa-paperclip <?= getLanguageDirection() === 'rtl' ? 'ms-1' : 'me-1' ?>"></i>Attach File (Optional)</label>
                     <p class="text-muted small mb-2">
@@ -189,7 +184,6 @@ include '../includes/header.php';
         }
     });
 
-    // Drag and drop
     const uploadArea = document.getElementById('uploadArea');
     uploadArea.addEventListener('dragover', (e) => {
         e.preventDefault();

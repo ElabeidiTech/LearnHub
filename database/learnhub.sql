@@ -12,8 +12,17 @@ CREATE TABLE users (
     password VARCHAR(255) NOT NULL,
     full_name VARCHAR(100) NOT NULL,
     role ENUM('student', 'teacher', 'admin') DEFAULT 'student',
+    status ENUM('pending', 'approved', 'rejected', 'suspended') DEFAULT 'approved',
     student_id VARCHAR(20) NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    profile_picture VARCHAR(255) NULL,
+    phone VARCHAR(20) NULL,
+    bio TEXT NULL,
+    verification_token VARCHAR(100) NULL,
+    verification_document VARCHAR(255) NULL,
+    verified_at TIMESTAMP NULL,
+    verified_by INT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (verified_by) REFERENCES users(id) ON DELETE SET NULL
 );
 
 -- Courses Table
@@ -142,6 +151,25 @@ CREATE TABLE announcements (
     FOREIGN KEY (course_id) REFERENCES courses(id) ON DELETE CASCADE
 );
 
+-- Teacher Verifications Table
+CREATE TABLE teacher_verifications (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    institution VARCHAR(255) NOT NULL,
+    qualification VARCHAR(255) NOT NULL,
+    experience_years INT DEFAULT 0,
+    subject_expertise VARCHAR(500),
+    verification_document VARCHAR(255),
+    linkedin_url VARCHAR(255),
+    additional_info TEXT,
+    status ENUM('pending', 'approved', 'rejected') DEFAULT 'pending',
+    reviewed_by INT NULL,
+    reviewed_at TIMESTAMP NULL,
+    rejection_reason TEXT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (reviewed_by) REFERENCES users(id) ON DELETE SET NULL
+);
 -- Insert Demo Data
 -- Password is 'password' hashed with password_hash()
 INSERT INTO users (username, email, password, full_name, role, student_id) VALUES

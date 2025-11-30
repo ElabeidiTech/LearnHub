@@ -1,6 +1,5 @@
 <?php
 return [
-    // Navigation
     'home' => 'Home',
     'contact' => 'Contatto',
     'about' => 'Chi siamo',
@@ -13,18 +12,15 @@ return [
     'teacher_dashboard' => 'Dashboard insegnante',
     'my_learning' => 'Il mio apprendimento',
     
-    // Hero Section
     'hero_title' => 'Sistema completo di gestione dell\'apprendimento',
     'hero_subtitle' => 'Piattaforma potente per le istituzioni educative per creare, gestire e fornire corsi in modo efficiente.',
     'create_course' => 'Crea corso',
     'my_courses' => 'I miei corsi',
     
-    // Stats
     'enrolled_students' => 'Studenti iscritti',
     'courses_created' => 'Corsi creati',
     'instructors' => 'Istruttori',
     
-    // Features
     'features_title' => 'Tutto ciò di cui hai bisogno per insegnare e imparare',
     'assignments' => 'Compiti',
     'assignments_desc' => 'Crea compiti con scadenze e punteggi. Gli studenti possono caricare file e inviare il loro lavoro.',
@@ -39,16 +35,13 @@ return [
     'analytics' => 'Analisi',
     'analytics_desc' => 'Visualizza statistiche dei quiz, tassi di invio e prestazioni della classe a colpo d\'occhio.',
     
-    // Universities
     'trusted_by' => 'Fidato dalle principali università canadesi',
     
-    // Footer
     'quick_links' => 'Link veloci',
     'connect' => 'Connetti',
     'all_rights_reserved' => 'Tutti i diritti riservati',
     'simple_lms' => 'Sistema di gestione dell\'apprendimento semplice',
     
-    // Login
     'welcome_back' => 'Bentornato!',
     'sign_in_continue' => 'Accedi per continuare ad imparare',
     'email_address' => 'Indirizzo email',
@@ -60,7 +53,6 @@ return [
     'dont_have_account' => 'Non hai un account?',
     'sign_up' => 'Registrati',
     
-    // Register
     'create_account' => 'Crea account',
     'start_learning_journey' => 'Inizia il tuo percorso di apprendimento oggi',
     'full_name' => 'Nome completo',
@@ -73,7 +65,6 @@ return [
     'privacy_policy' => 'Informativa sulla privacy',
     'already_have_account' => 'Hai già un account?',
     
-    // Contact
     'contact_us' => 'Contattaci',
     'contact_subtitle' => 'Hai domande? Ci piacerebbe sentirti.',
     'email' => 'Email',
@@ -84,7 +75,6 @@ return [
     'message' => 'Messaggio',
     'send_message' => 'Invia messaggio',
     
-    // About
     'about_us' => 'Chi siamo',
     'about_subtitle' => 'Potenziare l\'istruzione attraverso soluzioni innovative di gestione dell\'apprendimento.',
     'our_mission' => 'La nostra missione',
@@ -104,7 +94,6 @@ return [
     'join_educators' => 'Unisciti a migliaia di educatori e studenti che già utilizzano LearnHub.',
     'get_started_today' => 'Inizia oggi',
     
-    // Teacher Dashboard
     'welcome' => 'Benvenuto',
     'total_students' => 'Totale studenti',
     'pending_grades' => 'Voti in sospeso',

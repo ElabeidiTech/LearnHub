@@ -1,11 +1,33 @@
 <?php
 require_once '../config/config.php';
-requireRole('teacher');
+requireApprovedTeacher();
 
 $pageTitle = 'Gradebook';
 $user = getCurrentUser();
 
-// Get all submissions for teacher's courses
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_submission'])) {
+    $submissionId = (int)$_POST['submission_id'];
+    
+    $stmt = $pdo->prepare("
+        SELECT s.id FROM submissions s
+        JOIN assignments a ON s.assignment_id = a.id
+        JOIN courses c ON a.course_id = c.id
+        WHERE s.id = ? AND c.teacher_id = ?
+    ");
+    $stmt->execute([$submissionId, $user['id']]);
+    
+    if ($stmt->fetch()) {
+        $stmt = $pdo->prepare("DELETE FROM submissions WHERE id = ?");
+        $stmt->execute([$submissionId]);
+        setFlash('success', 'Submission deleted successfully.');
+    } else {
+        setFlash('danger', 'Unauthorized action.');
+    }
+    
+    header('Location: gradebook.php');
+    exit;
+}
+
 $stmt = $pdo->prepare("
     SELECT s.*, a.title as assignment_title, a.total_points, c.course_code, c.course_name, 
            u.full_name as student_name, u.email as student_email
@@ -19,7 +41,6 @@ $stmt = $pdo->prepare("
 $stmt->execute([$user['id']]);
 $submissions = $stmt->fetchAll();
 
-// Separate pending and graded
 $pendingSubmissions = array_filter($submissions, fn($s) => $s['grade'] === null);
 $gradedSubmissions = array_filter($submissions, fn($s) => $s['grade'] !== null);
 
@@ -32,7 +53,7 @@ include '../includes/header.php';
         <?= __('gradebook') ?>
     </h2>
 
-    <!-- Pending Submissions -->
+    
     <div class="card border-0 shadow-sm mb-4">
         <div class="card-header bg-white border-0 py-3">
             <h5 class="mb-0">
@@ -65,7 +86,7 @@ include '../includes/header.php';
                                 <tr>
                                     <td>
                                         <div class="d-flex align-items-center gap-2">
-                                            <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 32px; height: 32px; font-size: 0.75rem;">
+                                            <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center icon-circle-sm">
                                                 <?= strtoupper(substr($submission['student_name'], 0, 2)) ?>
                                             </div>
                                             <div>
@@ -100,7 +121,7 @@ include '../includes/header.php';
         </div>
     </div>
 
-    <!-- Graded Submissions -->
+    
     <div class="card border-0 shadow-sm">
         <div class="card-header bg-white border-0 py-3">
             <h5 class="mb-0">
@@ -133,7 +154,7 @@ include '../includes/header.php';
                                 <tr>
                                     <td>
                                         <div class="d-flex align-items-center gap-2">
-                                            <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 32px; height: 32px; font-size: 0.75rem;">
+                                            <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center icon-circle-sm">
                                                 <?= strtoupper(substr($submission['student_name'], 0, 2)) ?>
                                             </div>
                                             <span class="fw-semibold"><?= sanitize($submission['student_name']) ?></span>
@@ -154,6 +175,9 @@ include '../includes/header.php';
                                         <a href="grade-submission.php?id=<?= $submission['id'] ?>" class="btn btn-outline-secondary btn-sm">
                                             <i class="fas fa-edit <?= getLanguageDirection() === 'rtl' ? 'ms-1' : 'me-1' ?>"></i><?= __('edit') ?>
                                         </a>
+                                        <button type="button" class="btn btn-outline-danger btn-sm" onclick="confirmDelete(<?= $submission['id'] ?>)">
+                                            <i class="fas fa-trash <?= getLanguageDirection() === 'rtl' ? 'ms-1' : 'me-1' ?>"></i><?= __('delete') ?>
+                                        </button>
                                     </td>
                                 </tr>
                             <?php endforeach; ?>
@@ -164,5 +188,19 @@ include '../includes/header.php';
         </div>
     </div>
 </div>
+
+<form id="deleteForm" method="POST" style="display: none;">
+    <input type="hidden" name="delete_submission" value="1">
+    <input type="hidden" name="submission_id" id="deleteSubmissionId">
+</form>
+
+<script>
+function confirmDelete(submissionId) {
+    if (confirm('<?= __('Are you sure you want to delete this submission?') ?>')) {
+        document.getElementById('deleteSubmissionId').value = submissionId;
+        document.getElementById('deleteForm').submit();
+    }
+}
+</script>
 
 <?php include '../includes/footer.php'; ?>

@@ -1,11 +1,10 @@
 <?php
 require_once '../config/config.php';
-requireRole('teacher');
+requireApprovedTeacher();
 
 $pageTitle = 'Assignments';
 $user = getCurrentUser();
 
-// Handle delete
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_id'])) {
     $stmt = $pdo->prepare("DELETE FROM assignments WHERE id = ? AND course_id IN (SELECT id FROM courses WHERE teacher_id = ?)");
     $stmt->execute([$_POST['delete_id'], $user['id']]);
@@ -14,7 +13,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_id'])) {
     exit;
 }
 
-// Get all assignments for teacher's courses
 $stmt = $pdo->prepare("
     SELECT a.*, c.course_code, c.course_name,
            (SELECT COUNT(*) FROM submissions WHERE assignment_id = a.id) as submission_count,
@@ -81,9 +79,9 @@ include '../includes/header.php';
                                         <?php endif; ?>
                                         <span class="badge bg-info text-dark"><?= $assignment['submission_count'] ?> submitted</span>
                                     </div>
-                                    <form method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this assignment?');">
+                                    <form method="POST" class="d-inline" id="deleteAssignmentForm<?= $assignment['id'] ?>">
                                         <input type="hidden" name="delete_id" value="<?= $assignment['id'] ?>">
-                                        <button type="submit" class="btn btn-danger btn-sm">
+                                        <button type="button" class="btn btn-danger btn-sm" onclick="showConfirm('Are you sure you want to delete this assignment? This action cannot be undone.', function() { document.getElementById('deleteAssignmentForm<?= $assignment['id'] ?>').submit(); }, 'Delete Assignment')">
                                             <i class="fas fa-trash <?= getLanguageDirection() === 'rtl' ? 'ms-1' : 'me-1' ?>"></i>Delete
                                         </button>
                                     </form>

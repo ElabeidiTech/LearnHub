@@ -2,13 +2,11 @@
 $pageTitle = 'LearnHub';
 require_once 'includes/header.php';
 
-// Stats for display
 $totalStudents = 12450;
 $totalCourses = 850;
 $totalTeachers = 320;
 ?>
 
-<!-- Hero Section -->
 <section class="hero-section text-white">
     <div class="container hero-content">
         <div class="row align-items-center">
@@ -31,7 +29,7 @@ $totalTeachers = 320;
                             </a>
                         <?php endif; ?>
                     <?php else: ?>
-                        <a href="auth/login.php" class="btn btn-light btn-lg px-4">
+                        <a href="#" class="btn btn-light btn-lg px-4" data-bs-toggle="modal" data-bs-target="#loginModal">
                             <i class="fas fa-sign-in-alt <?= getLanguageDirection() === 'rtl' ? 'ms-2' : 'me-2' ?>"></i><?= __('login') ?>
                         </a>
                         <a href="auth/register.php" class="btn btn-outline-light btn-lg px-4">
@@ -42,13 +40,12 @@ $totalTeachers = 320;
             </div>
             <div class="col-lg-6 text-center animate__animated animate__fadeInRight">
                 <img src="<?= SITE_URL ?>/assets/images/Learning Management/student-going-to-school.svg" 
-                    alt="Learning Management" class="img-fluid" style="max-height: 400px;" loading="eager" fetchpriority="high">
+                    alt="Learning Management" class="img-fluid" loading="eager" fetchpriority="high">
             </div>
         </div>
     </div>
 </section>
 
-<!-- Stats Section -->
 <section class="stats-section">
     <div class="container">
         <div class="row text-center">
@@ -68,7 +65,6 @@ $totalTeachers = 320;
     </div>
 </section>
 
-<!-- Features Section -->
 <section class="features">
     <h2><?= __('features_title') ?></h2>
     <div class="feature-grid">
@@ -117,7 +113,6 @@ $totalTeachers = 320;
     </div>
 </section>
 
-<!-- Partner Universities Section -->
 <section class="py-4 bg-light overflow-hidden">
     <div class="container mb-3">
         <h5 class="text-center text-muted fw-semibold"><?= __('trusted_by') ?></h5>
@@ -148,5 +143,60 @@ $totalTeachers = 320;
         </div>
     </div>
 </section>
+
+
+<div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header border-0">
+                <h5 class="modal-title" id="loginModalLabel">
+                    <i class="fas fa-sign-in-alt me-2"></i><?= __('login') ?>
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form method="POST" action="auth/login.php" id="loginForm">
+                    <div class="mb-3">
+                        <label for="email" class="form-label"><?= __('email_address') ?></label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                            <input type="email" class="form-control" id="email" name="email" placeholder="<?= __('enter_email') ?>" required>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="password" class="form-label"><?= __('password') ?></label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                            <input type="password" class="form-control" id="password" name="password" placeholder="<?= __('enter_password') ?>" required>
+                            <button class="btn btn-outline-secondary" type="button" onclick="toggleModalPassword()">
+                                <i class="fas fa-eye" id="toggleModalIcon"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="remember" name="remember">
+                            <label class="form-check-label" for="remember">
+                                <?= __('remember_me') ?>
+                            </label>
+                        </div>
+                        <a href="auth/forgot-password.php" class="text-decoration-none small"><?= __('forgot_password') ?></a>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary w-100 mb-3">
+                        <i class="fas fa-sign-in-alt me-2"></i><?= __('login') ?>
+                    </button>
+                    
+                    <div class="text-center">
+                        <span class="text-muted"><?= __('dont_have_account') ?> </span>
+                        <a href="auth/register.php" class="text-decoration-none"><?= __('register') ?></a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 
 <?php require_once 'includes/footer.php'; ?>
