@@ -5,6 +5,7 @@ requireApprovedTeacher();
 $courseId = $_GET['id'] ?? 0;
 $user = getCurrentUser();
 
+/** Retrieve course details with enrollment and content statistics (ownership verification) */
 $stmt = $pdo->prepare("
     SELECT c.*,
            (SELECT COUNT(*) FROM enrollments WHERE course_id = c.id) as student_count,
@@ -24,6 +25,7 @@ if (!$course) {
 
 $pageTitle = $course['course_name'];
 
+/** Retrieve all assignments for this course with submission statistics */
 $stmt = $pdo->prepare("
     SELECT a.*,
            (SELECT COUNT(*) FROM submissions WHERE assignment_id = a.id) as submission_count,
@@ -35,6 +37,7 @@ $stmt = $pdo->prepare("
 $stmt->execute([$courseId]);
 $assignments = $stmt->fetchAll();
 
+/** Retrieve all quizzes for this course with student attempt count */
 $stmt = $pdo->prepare("
     SELECT q.*,
            (SELECT COUNT(DISTINCT student_id) FROM quiz_attempts WHERE quiz_id = q.id) as attempt_count
@@ -45,6 +48,7 @@ $stmt = $pdo->prepare("
 $stmt->execute([$courseId]);
 $quizzes = $stmt->fetchAll();
 
+/** Retrieve all materials for this course */
 $stmt = $pdo->prepare("
     SELECT m.*
     FROM materials m
@@ -54,6 +58,7 @@ $stmt = $pdo->prepare("
 $stmt->execute([$courseId]);
 $materials = $stmt->fetchAll();
 
+/** Retrieve all enrolled students with enrollment dates */
 $stmt = $pdo->prepare("
     SELECT u.id, u.full_name, u.email, e.enrolled_at
     FROM enrollments e
@@ -67,8 +72,9 @@ $students = $stmt->fetchAll();
 include '../includes/header.php';
 ?>
 
+<!-- Main container for course details page -->
 <div class="container my-5">
-    
+    <!-- Course header card with gradient background and statistics -->
     <div class="card border-0 shadow-sm mb-4" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
         <div class="card-body text-white p-4">
             <div class="d-flex justify-content-between align-items-start">
@@ -103,7 +109,7 @@ include '../includes/header.php';
         </div>
     </div>
 
-    
+    <!-- Tab navigation for assignments, quizzes, materials, and students -->
     <ul class="nav nav-tabs mb-4" role="tablist">
         <li class="nav-item" role="presentation">
             <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#assignments-tab" type="button">
@@ -127,9 +133,9 @@ include '../includes/header.php';
         </li>
     </ul>
 
-    
+    <!-- Tab content container with all course sections -->
     <div class="tab-content">
-        
+        <!-- Assignments tab panel with list of course assignments -->
         <div class="tab-pane fade show active" id="assignments-tab">
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <h5 class="mb-0">Assignments</h5>

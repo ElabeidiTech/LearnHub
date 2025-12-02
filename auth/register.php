@@ -2,6 +2,7 @@
 $pageTitle = 'Register';
 require_once '../config/config.php';
 
+/** Redirect already logged-in users to their dashboard based on role */
 if (isLoggedIn()) {
     redirect('/' . $_SESSION['user_role'] . '/');
 }
@@ -9,13 +10,16 @@ if (isLoggedIn()) {
 $error = '';
 $success = '';
 
+/** Process registration form submission */
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    /** Extract and sanitize form input data, default role to student */
     $fullName = sanitize($_POST['full_name'] ?? '');
     $email = sanitize($_POST['email'] ?? '');
     $password = $_POST['password'] ?? '';
     $confirmPassword = $_POST['confirm_password'] ?? '';
     $role = $_POST['role'] ?? 'student';
     
+    /** Validate all registration inputs with comprehensive checks */
     if (empty($fullName) || empty($email) || empty($password) || empty($confirmPassword)) {
         $error = 'Please fill in all fields.';
     } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
@@ -27,15 +31,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } elseif (!in_array($role, ['student', 'teacher'])) {
         $error = 'Invalid role selected.';
     } else {
+        /** Check if email is already registered in the database */
         $stmt = $pdo->prepare("SELECT id FROM users WHERE email = ?");
         $stmt->execute([$email]);
         
         if ($stmt->fetch()) {
             $error = 'An account with this email already exists.';
         } else {
+            /** Hash password securely using bcrypt algorithm */
             $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
             
+            /** Handle teacher registration - requires admin approval */
             if ($role === 'teacher') {
+                /** Create teacher account with 'pending' status for admin verification */
                 $stmt = $pdo->prepare("INSERT INTO users (full_name, email, password, role, status) VALUES (?, ?, ?, 'teacher', 'pending')");
                 
                 if ($stmt->execute([$fullName, $email, $hashedPassword])) {
@@ -45,9 +53,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $error = 'Something went wrong. Please try again.';
                 }
             } else {
+                /** Create student account with auto-approved status */
                 $stmt = $pdo->prepare("INSERT INTO users (full_name, email, password, role, status) VALUES (?, ?, ?, ?, 'approved')");
                 
                 if ($stmt->execute([$fullName, $email, $hashedPassword, $role])) {
+                    /** Retrieve new user ID and automatically log them in */
                     $userId = $pdo->lastInsertId();
                     $_SESSION['user_id'] = $userId;
                     $_SESSION['user'] = [
@@ -58,6 +68,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         'status' => 'approved'
                     ];
                     
+                    /** Redirect to student dashboard with success message */
                     $_SESSION['flash_success'] = 'Account created successfully!';
                     redirect('/student/');
                 } else {
@@ -90,9 +101,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link rel="stylesheet" href="<?= SITE_URL ?>/assets/css/style.css">
 </head>
 <body>
+    <!-- Auth page wrapper: centered authentication form container -->
     <div class="auth-wrapper">
         <div class="container">
+            <!-- Registration form card -->
             <div class="auth-card">
+                <!-- Page header with logo, title, and description -->
                 <div class="text-center mb-4">
                     <a href="<?= SITE_URL ?>" class="logo text-decoration-none text-primary">
                         <i class="fas fa-graduation-cap"></i>
@@ -102,13 +116,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <p class="text-muted"><?= __('start_learning_journey') ?></p>
                 </div>
                 
+                <!-- Error alert for validation failures or registration issues -->
                 <?php if ($error): ?>
                     <div class="alert alert-danger">
                         <i class="fas fa-exclamation-circle me-2"></i><?= $error ?>
                     </div>
                 <?php endif; ?>
                 
+                <!-- Registration form: full name, email, passwords, and role selection -->
                 <form method="POST" class="needs-validation" novalidate>
+                    <!-- Full name input field -->
                     <div class="mb-3">
                         <label for="full_name" class="form-label"><?= __('full_name') ?></label>
                         <div class="input-group">
@@ -118,6 +135,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         </div>
                     </div>
                     
+                    <!-- Email address input field -->
                     <div class="mb-3">
                         <label for="email" class="form-label"><?= __('email_address') ?></label>
                         <div class="input-group">
@@ -127,6 +145,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         </div>
                     </div>
                     
+                    <!-- Password input with toggle visibility and strength indicator -->
                     <div class="mb-3">
                         <label for="password" class="form-label"><?= __('password') ?></label>
                         <div class="input-group">
@@ -140,6 +159,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <small id="password-strength" class="form-text"></small>
                     </div>
                     
+                    <!-- Confirm password input with toggle visibility -->
                     <div class="mb-3">
                         <label for="confirm_password" class="form-label"><?= __('confirm_password') ?></label>
                         <div class="input-group">
@@ -151,6 +171,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         </div>
                     </div>
                     
+                    <!-- Role selection: student (auto-approved) or teacher (requires admin approval) -->
                     <div class="mb-4">
                         <label class="form-label"><?= __('i_want_to') ?></label>
                         <div class="row g-2">
@@ -171,6 +192,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         </div>
                     </div>
                     
+                    <!-- Terms and conditions acceptance checkbox -->
                     <div class="form-check mb-4">
                         <input type="checkbox" class="form-check-input" id="terms" required>
                         <label class="form-check-label" for="terms">
@@ -179,6 +201,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         </label>
                     </div>
                     
+                    <!-- Submit Button -->
                     <button type="submit" class="btn btn-primary w-100 py-2 mb-3">
                         <i class="fas fa-user-plus me-2"></i><?= __('create_account') ?>
                     </button>

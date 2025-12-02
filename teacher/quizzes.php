@@ -5,7 +5,9 @@ requireApprovedTeacher();
 $pageTitle = 'Quizzes';
 $user = getCurrentUser();
 
+/** Handle quiz deletion request with ownership verification */
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_id'])) {
+    /** Delete quiz only if it belongs to teacher's course (security check) */
     $stmt = $pdo->prepare("DELETE FROM quizzes WHERE id = ? AND course_id IN (SELECT id FROM courses WHERE teacher_id = ?)");
     $stmt->execute([$_POST['delete_id'], $user['id']]);
     setFlash('success', 'Quiz deleted successfully.');
@@ -13,6 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_id'])) {
     exit;
 }
 
+/** Retrieve all quizzes for teacher's courses with question count, attempt count, and average score */
 $stmt = $pdo->prepare("
     SELECT q.*, c.course_code, c.course_name,
            (SELECT COUNT(*) FROM quiz_questions WHERE quiz_id = q.id) as question_count,

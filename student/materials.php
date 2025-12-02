@@ -5,6 +5,7 @@ requireRole('student');
 $pageTitle = 'Course Materials';
 $user = getCurrentUser();
 
+/** Retrieve all course materials from enrolled courses */
 $stmt = $pdo->prepare("
     SELECT m.*, c.course_code, c.course_name
     FROM materials m
@@ -16,6 +17,7 @@ $stmt = $pdo->prepare("
 $stmt->execute([$user['id']]);
 $materials = $stmt->fetchAll();
 
+/** Group materials by course code for organized display */
 $materialsByCourse = [];
 foreach ($materials as $material) {
     $materialsByCourse[$material['course_code']][] = $material;
@@ -24,6 +26,7 @@ foreach ($materials as $material) {
 include '../includes/header.php';
 ?>
 
+<!-- Main container for course materials page -->
 <div class="container my-5">
     <h2 class="mb-4"><i class="fas fa-folder text-secondary <?= getLanguageDirection() === 'rtl' ? 'ms-2' : 'me-2' ?>"></i><?= __('course_materials') ?></h2>
 
@@ -37,6 +40,7 @@ include '../includes/header.php';
             </div>
         </div>
     <?php else: ?>
+        <!-- Materials grouped by course code with collapsible cards -->
         <?php foreach ($materialsByCourse as $courseCode => $courseMaterials): ?>
             <div class="card mb-4 border-0 shadow-sm">
                 <div class="card-header bg-white border-0 py-3 d-flex justify-content-between align-items-center">

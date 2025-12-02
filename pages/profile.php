@@ -7,26 +7,33 @@ $user = getCurrentUser();
 $error = '';
 $success = '';
 
+/** Handle profile management POST requests */
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    /** Process profile information update */
     if (isset($_POST['update_profile'])) {
+        /** Extract and sanitize profile data */
         $fullName = trim($_POST['full_name'] ?? '');
         $email = trim($_POST['email'] ?? '');
         $phone = trim($_POST['phone'] ?? '');
         $bio = trim($_POST['bio'] ?? '');
         
+        /** Validate required fields and email format */
         if (empty($fullName) || empty($email)) {
             $error = __('name_email_required');
         } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
             $error = __('invalid_email');
         } else {
+            /** Check if email is taken by another user */
             $stmt = $pdo->prepare("SELECT id FROM users WHERE email = ? AND id != ?");
             $stmt->execute([$email, $user['id']]);
             
             if ($stmt->fetch()) {
                 $error = __('email_taken');
             } else {
+                /** Update user profile in database */
                 $stmt = $pdo->prepare("UPDATE users SET full_name = ?, email = ?, phone = ?, bio = ? WHERE id = ?");
                 if ($stmt->execute([$fullName, $email, $phone, $bio, $user['id']])) {
+                    /** Update session with new profile data */
                     $_SESSION['user']['full_name'] = $fullName;
                     $_SESSION['user']['email'] = $email;
                     setFlash('success', __('profile_updated'));
@@ -38,11 +45,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
     
+    /** Process password change request */
     if (isset($_POST['change_password'])) {
+        /** Extract password fields */
         $currentPassword = $_POST['current_password'] ?? '';
         $newPassword = $_POST['new_password'] ?? '';
         $confirmPassword = $_POST['confirm_password'] ?? '';
         
+        /** Validate password requirements */
         if (empty($currentPassword) || empty($newPassword) || empty($confirmPassword)) {
             $error = __('all_fields_required');
         } elseif ($newPassword !== $confirmPassword) {
@@ -50,13 +60,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } elseif (strlen($newPassword) < 6) {
             $error = __('password_min_length');
         } else {
+            /** Retrieve current password hash for verification */
             $stmt = $pdo->prepare("SELECT password FROM users WHERE id = ?");
             $stmt->execute([$user['id']]);
             $userData = $stmt->fetch();
             
+            /** Verify current password is correct */
             if (!password_verify($currentPassword, $userData['password'])) {
                 $error = __('current_password_incorrect');
             } else {
+                /** Hash new password and update in database */
                 $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
                 $stmt = $pdo->prepare("UPDATE users SET password = ? WHERE id = ?");
                 
@@ -70,21 +83,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
     
+    /** Process profile picture upload */
     if (isset($_POST['upload_picture'])) {
         if (isset($_FILES['profile_picture']) && $_FILES['profile_picture']['error'] === UPLOAD_ERR_OK) {
             $file = $_FILES['profile_picture'];
             $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
             
+            /** Validate image format and size (max 5MB) */
             if (!in_array($ext, ['jpg', 'jpeg', 'png', 'gif'])) {
                 $error = __('invalid_image_format');
             } elseif ($file['size'] > 5 * 1024 * 1024) {
                 $error = __('image_too_large');
             } else {
+                /** Ensure upload directory exists */
                 $uploadDir = UPLOAD_PATH . 'profiles/';
                 if (!is_dir($uploadDir)) {
                     mkdir($uploadDir, 0755, true);
                 }
                 
+                /** Delete old profile picture if exists */
                 if (!empty($user['profile_picture'])) {
                     $oldPath = UPLOAD_PATH . $user['profile_picture'];
                     if (file_exists($oldPath)) {
@@ -92,10 +109,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     }
                 }
                 
+                /** Generate unique filename and save uploaded file */
                 $fileName = $user['id'] . '_' . time() . '.' . $ext;
                 $filePath = 'profiles/' . $fileName;
                 
                 if (move_uploaded_file($file['tmp_name'], UPLOAD_PATH . $filePath)) {
+                    /** Update user's profile picture path in database */
                     $stmt = $pdo->prepare("UPDATE users SET profile_picture = ? WHERE id = ?");
                     
                     if ($stmt->execute([$filePath, $user['id']])) {
@@ -114,13 +133,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
     
+    /** Process profile picture deletion request */
     if (isset($_POST['delete_picture'])) {
         if (!empty($user['profile_picture'])) {
+            /** Delete physical file from server storage */
             $oldPath = UPLOAD_PATH . $user['profile_picture'];
             if (file_exists($oldPath)) {
                 unlink($oldPath);
             }
             
+            /** Remove profile picture path from database */
             $stmt = $pdo->prepare("UPDATE users SET profile_picture = NULL WHERE id = ?");
             if ($stmt->execute([$user['id']])) {
                 unset($_SESSION['user']['profile_picture']);
@@ -133,6 +155,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
+/** Retrieve latest user data from database */
 $stmt = $pdo->prepare("SELECT * FROM users WHERE id = ?");
 $stmt->execute([$user['id']]);
 $userData = $stmt->fetch();

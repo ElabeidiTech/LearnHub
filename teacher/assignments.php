@@ -5,7 +5,9 @@ requireApprovedTeacher();
 $pageTitle = 'Assignments';
 $user = getCurrentUser();
 
+/** Handle assignment deletion request with ownership verification */
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_id'])) {
+    /** Delete assignment only if it belongs to teacher's course (security check) */
     $stmt = $pdo->prepare("DELETE FROM assignments WHERE id = ? AND course_id IN (SELECT id FROM courses WHERE teacher_id = ?)");
     $stmt->execute([$_POST['delete_id'], $user['id']]);
     setFlash('success', 'Assignment deleted successfully.');
@@ -13,6 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_id'])) {
     exit;
 }
 
+/** Retrieve all assignments for teacher's courses with submission counts and pending grades */
 $stmt = $pdo->prepare("
     SELECT a.*, c.course_code, c.course_name,
            (SELECT COUNT(*) FROM submissions WHERE assignment_id = a.id) as submission_count,

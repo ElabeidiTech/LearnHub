@@ -1,7 +1,10 @@
+-- LearnHub LMS Database Schema
+-- Run this file to create the database and tables
+
 CREATE DATABASE IF NOT EXISTS learnhub;
 USE learnhub;
 
-
+-- Users Table (Students and Teachers)
 CREATE TABLE users (
     id INT AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR(50) UNIQUE NOT NULL,
@@ -22,7 +25,7 @@ CREATE TABLE users (
     FOREIGN KEY (verified_by) REFERENCES users(id) ON DELETE SET NULL
 );
 
-
+-- Courses Table
 CREATE TABLE courses (
     id INT AUTO_INCREMENT PRIMARY KEY,
     teacher_id INT NOT NULL,
@@ -33,7 +36,7 @@ CREATE TABLE courses (
     FOREIGN KEY (teacher_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
-
+-- Course Enrollments
 CREATE TABLE enrollments (
     id INT AUTO_INCREMENT PRIMARY KEY,
     student_id INT NOT NULL,
@@ -44,7 +47,7 @@ CREATE TABLE enrollments (
     UNIQUE KEY unique_enrollment (student_id, course_id)
 );
 
-
+-- Assignments Table
 CREATE TABLE assignments (
     id INT AUTO_INCREMENT PRIMARY KEY,
     course_id INT NOT NULL,
@@ -58,7 +61,7 @@ CREATE TABLE assignments (
     FOREIGN KEY (course_id) REFERENCES courses(id) ON DELETE CASCADE
 );
 
-
+-- Assignment Submissions
 CREATE TABLE submissions (
     id INT AUTO_INCREMENT PRIMARY KEY,
     assignment_id INT NOT NULL,
@@ -74,7 +77,7 @@ CREATE TABLE submissions (
     FOREIGN KEY (student_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
-
+-- Quizzes Table
 CREATE TABLE quizzes (
     id INT AUTO_INCREMENT PRIMARY KEY,
     course_id INT NOT NULL,
@@ -87,7 +90,7 @@ CREATE TABLE quizzes (
     FOREIGN KEY (course_id) REFERENCES courses(id) ON DELETE CASCADE
 );
 
-
+-- Quiz Questions
 CREATE TABLE quiz_questions (
     id INT AUTO_INCREMENT PRIMARY KEY,
     quiz_id INT NOT NULL,
@@ -101,7 +104,7 @@ CREATE TABLE quiz_questions (
     FOREIGN KEY (quiz_id) REFERENCES quizzes(id) ON DELETE CASCADE
 );
 
-
+-- Quiz Attempts
 CREATE TABLE quiz_attempts (
     id INT AUTO_INCREMENT PRIMARY KEY,
     quiz_id INT NOT NULL,
@@ -114,7 +117,7 @@ CREATE TABLE quiz_attempts (
     FOREIGN KEY (student_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
-
+-- Quiz Answers
 CREATE TABLE quiz_answers (
     id INT AUTO_INCREMENT PRIMARY KEY,
     attempt_id INT NOT NULL,
@@ -125,7 +128,7 @@ CREATE TABLE quiz_answers (
     FOREIGN KEY (question_id) REFERENCES quiz_questions(id) ON DELETE CASCADE
 );
 
-
+-- Course Materials/Files
 CREATE TABLE materials (
     id INT AUTO_INCREMENT PRIMARY KEY,
     course_id INT NOT NULL,
@@ -138,7 +141,7 @@ CREATE TABLE materials (
     FOREIGN KEY (course_id) REFERENCES courses(id) ON DELETE CASCADE
 );
 
-
+-- Announcements
 CREATE TABLE announcements (
     id INT AUTO_INCREMENT PRIMARY KEY,
     course_id INT NOT NULL,
@@ -148,7 +151,7 @@ CREATE TABLE announcements (
     FOREIGN KEY (course_id) REFERENCES courses(id) ON DELETE CASCADE
 );
 
-
+-- Teacher Verifications Table
 CREATE TABLE teacher_verifications (
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
@@ -168,11 +171,12 @@ CREATE TABLE teacher_verifications (
     FOREIGN KEY (reviewed_by) REFERENCES users(id) ON DELETE SET NULL
 );
 -- Insert Demo Data
+-- Password is 'password' hashed with password_hash()
 INSERT INTO users (username, email, password, full_name, role, student_id) VALUES
 ('admin', 'admin@learnhub.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Admin User', 'admin', NULL),
 ('teacher1', 'teacher@learnhub.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Prof. John Doe', 'teacher', NULL),
 ('student1', 'student@learnhub.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Jane Smith', 'student', 'STU001'),
-('student2', 'maria@learnhub.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Adam Lopez', 'student', 'STU002');
+('student2', 'adam@learnhub.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Adam Lopez', 'student', 'STU002');
 
 -- Demo Courses
 INSERT INTO courses (teacher_id, course_code, course_name, description) VALUES

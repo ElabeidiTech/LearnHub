@@ -3,6 +3,7 @@ $pageTitle = 'About Us';
 require_once __DIR__ . '/../includes/header.php';
 ?>
 
+<!-- Main about section with centered content -->
 <section class="py-5">
     <div class="container">
         <div class="row justify-content-center">
@@ -10,6 +11,7 @@ require_once __DIR__ . '/../includes/header.php';
                 <h1 class="display-5 fw-bold mb-4"><?= __('about_us') ?></h1>
                 <p class="lead mb-5"><?= __('about_subtitle') ?></p>
                 
+                <!-- Mission and vision cards in two columns -->
                 <div class="row g-4 mb-5">
                     <div class="col-md-6">
                         <div class="card h-100 border-0 shadow-sm">
@@ -35,6 +37,7 @@ require_once __DIR__ . '/../includes/header.php';
                     </div>
                 </div>
                 
+                <!-- Why choose us section with feature list -->
                 <div class="bg-light rounded p-5 mb-5">
                     <h2 class="h3 mb-4"><?= __('why_choose') ?></h2>
                     <div class="row g-4">

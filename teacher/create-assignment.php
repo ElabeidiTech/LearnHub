@@ -5,13 +5,16 @@ requireApprovedTeacher();
 $pageTitle = 'Create Assignment';
 $user = getCurrentUser();
 
+/** Retrieve all courses taught by current teacher for course selection */
 $stmt = $pdo->prepare("SELECT * FROM courses WHERE teacher_id = ? ORDER BY course_code");
 $stmt->execute([$user['id']]);
 $courses = $stmt->fetchAll();
 
 $error = '';
 
+/** Handle assignment creation form submission */
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    /** Extract assignment metadata from form */
     $courseId = $_POST['course_id'] ?? '';
     $title = trim($_POST['title'] ?? '');
     $description = trim($_POST['description'] ?? '');
@@ -19,9 +22,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $dueTime = $_POST['due_time'] ?? '23:59';
     $totalPoints = intval($_POST['total_points'] ?? 100);
     
+    /** Validate required assignment fields */
     if (empty($courseId) || empty($title) || empty($dueDate)) {
         $error = 'Please fill in all required fields.';
     } else {
+        /** Verify teacher owns the selected course (security check) */
         $stmt = $pdo->prepare("SELECT id FROM courses WHERE id = ? AND teacher_id = ?");
         $stmt->execute([$courseId, $user['id']]);
         
@@ -31,22 +36,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $fileName = null;
             $filePath = null;
             
+            /** Process optional assignment attachment file */
             if (isset($_FILES['file']) && $_FILES['file']['error'] === UPLOAD_ERR_OK) {
                 $file = $_FILES['file'];
                 $ext = getFileExtension($file['name']);
                 
+                /** Validate file size (max 10MB) */
                 if ($file['size'] > getMaxFileSize()) {
                     $error = 'File too large. Maximum size: 10MB';
                 } else {
+                    /** Create course-specific upload directory */
                     $uploadDir = UPLOAD_PATH . 'assignments/' . $courseId . '/';
                     if (!is_dir($uploadDir)) {
                         mkdir($uploadDir, 0755, true);
                     }
                     
+                    /** Generate unique filename to prevent conflicts */
                     $fileName = $file['name'];
                     $uniqueName = time() . '_' . preg_replace('/[^a-zA-Z0-9._-]/', '', $fileName);
                     $filePath = 'assignments/' . $courseId . '/' . $uniqueName;
                     
+                    /** Move uploaded file to server storage */
                     if (!move_uploaded_file($file['tmp_name'], UPLOAD_PATH . $filePath)) {
                         $error = 'Failed to upload file. Please try again.';
                         $filePath = null;
@@ -56,11 +66,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
             
             if (!$error) {
+                /** Combine date and time for due datetime */
                 $dueDatetime = $dueDate . ' ' . $dueTime . ':00';
                 
+                /** Insert assignment into database */
                 $stmt = $pdo->prepare("INSERT INTO assignments (course_id, title, description, due_date, total_points, file_name, file_path) VALUES (?, ?, ?, ?, ?, ?, ?)");
                 
                 if ($stmt->execute([$courseId, $title, $description, $dueDatetime, $totalPoints, $fileName, $filePath])) {
+                    /** Redirect to assignments list with success message */
                     setFlash('success', 'Assignment created successfully!');
                     header('Location: assignments.php');
                     exit;
@@ -75,7 +88,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 include '../includes/header.php';
 ?>
 
+<!-- Main container for create assignment page -->
 <div class="container my-5">
+    <!-- Back to Assignments Link -->
     <a href="assignments.php" class="btn btn-outline-primary mb-3">
         <i class="fas fa-arrow-left <?= getLanguageDirection() === 'rtl' ? 'ms-1' : 'me-1' ?>"></i> Back to Assignments
     </a>
@@ -93,6 +108,7 @@ include '../includes/header.php';
     <?php else: ?>
 
     <?php if ($error): ?>
+        <!-- Error alert for validation failures -->
         <div class="alert alert-danger alert-dismissible fade show" role="alert">
             <i class="fas fa-exclamation-circle <?= getLanguageDirection() === 'rtl' ? 'ms-1' : 'me-1' ?>"></i>
             <?= sanitize($error) ?>
@@ -100,6 +116,7 @@ include '../includes/header.php';
         </div>
     <?php endif; ?>
 
+    <!-- Assignment creation form card with course, title, description, file upload, and due date fields -->
     <div class="card border-0 shadow-sm">
         <div class="card-body">
             <form method="POST" enctype="multipart/form-data">
@@ -128,7 +145,7 @@ include '../includes/header.php';
                     <textarea name="description" class="form-control" rows="5" placeholder="Enter assignment instructions..."><?= sanitize($_POST['description'] ?? '') ?></textarea>
                 </div>
 
-                
+                <!-- Optional file attachment with drag-and-drop upload area -->
                 <div class="mb-3">
                     <label class="form-label fw-semibold"><i class="fas fa-paperclip <?= getLanguageDirection() === 'rtl' ? 'ms-1' : 'me-1' ?>"></i>Attach File (Optional)</label>
                     <p class="text-muted small mb-2">
@@ -178,12 +195,14 @@ include '../includes/header.php';
     </div>
 
     <script>
+    /** Update selected file display when user chooses a file */
     document.getElementById('fileInput').addEventListener('change', function(e) {
         if (this.files.length > 0) {
             document.getElementById('selectedFile').innerHTML = '<i class="fas fa-check-circle"></i> Selected: ' + this.files[0].name;
         }
     });
 
+    /** Enable drag-and-drop file upload with visual feedback */
     const uploadArea = document.getElementById('uploadArea');
     uploadArea.addEventListener('dragover', (e) => {
         e.preventDefault();

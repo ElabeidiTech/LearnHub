@@ -5,6 +5,7 @@ requireRole('student');
 $user = getCurrentUser();
 $assignmentId = $_GET['id'] ?? 0;
 
+/** Verify student is enrolled in course and retrieve assignment details with course and teacher info */
 $stmt = $pdo->prepare("
     SELECT a.*, c.course_code, c.course_name, c.id as course_id,
            u.full_name as teacher_name
@@ -17,12 +18,14 @@ $stmt = $pdo->prepare("
 $stmt->execute([$assignmentId, $user['id']]);
 $assignment = $stmt->fetch();
 
+/** Redirect if assignment not found or student not enrolled in course */
 if (!$assignment) {
     setFlash('danger', 'Assignment not found.');
     header('Location: assignments.php');
     exit;
 }
 
+/** Check if student has already submitted this assignment */
 $stmt = $pdo->prepare("SELECT * FROM submissions WHERE assignment_id = ? AND student_id = ?");
 $stmt->execute([$assignmentId, $user['id']]);
 $submission = $stmt->fetch();
@@ -32,7 +35,9 @@ $pageTitle = $assignment['title'];
 include '../includes/header.php';
 ?>
 
+<!-- Main container for assignment details page -->
 <div class="container my-5">
+    <!-- Page header with back navigation and submit button -->
     <div class="d-flex justify-content-between align-items-center mb-4">
         <a href="assignments.php" class="btn btn-outline-secondary">
             <i class="fas fa-arrow-left <?= getLanguageDirection() === 'rtl' ? 'ms-1' : 'me-1' ?>"></i><?= __('back_to_assignments') ?>
@@ -44,10 +49,14 @@ include '../includes/header.php';
         <?php endif; ?>
     </div>
 
+    <!-- Two-column layout: assignment info (left), metadata sidebar (right) -->
     <div class="row g-4">
         
+        <!-- Left column: assignment details card with instructions, attachments, and submission status -->
         <div class="col-lg-8">
+            <!-- Assignment details card with title, course, points, and full information -->
             <div class="card border-0 shadow-sm">
+                <!-- Card header with assignment title, course badge, and points -->
                 <div class="card-header bg-white border-0 py-3">
                     <div class="d-flex justify-content-between align-items-start">
                         <div>
@@ -66,6 +75,7 @@ include '../includes/header.php';
                     </div>
                 </div>
                 <div class="card-body">
+                    <!-- Assignment instructions section -->
                     <div class="mb-4">
                         <h5 class="mb-3"><i class="fas fa-info-circle text-primary <?= getLanguageDirection() === 'rtl' ? 'ms-2' : 'me-2' ?>"></i><?= __('instructions') ?></h5>
                         <div class="bg-light p-4 rounded">
@@ -74,6 +84,7 @@ include '../includes/header.php';
                     </div>
 
                     
+                    <!-- Teacher's attached file for download and preview (if provided) -->
                     <?php if (!empty($assignment['file_name']) && !empty($assignment['file_path'])): ?>
                         <div class="mb-4">
                             <h5 class="mb-3"><i class="fas fa-paperclip text-warning <?= getLanguageDirection() === 'rtl' ? 'ms-2' : 'me-2' ?>"></i><?= __('attached_file') ?></h5>
@@ -115,8 +126,9 @@ include '../includes/header.php';
                         </div>
                     <?php endif; ?>
 
-                    
+                    <!-- Submission status: shows submission details, grade, feedback, or overdue notice -->
                     <?php if ($submission): ?>
+                        <!-- Submission alert with submission date, file, comment, grade, and feedback -->
                         <div class="alert alert-<?= $submission['grade'] !== null ? 'success' : 'info' ?> border-0">
                             <h5 class="alert-heading">
                                 <i class="fas fa-<?= $submission['grade'] !== null ? 'check-circle' : 'clock' ?> <?= getLanguageDirection() === 'rtl' ? 'ms-1' : 'me-1' ?>"></i>
@@ -147,8 +159,9 @@ include '../includes/header.php';
             </div>
         </div>
 
-        
+        <!-- Right column: assignment metadata sidebar with teacher, dates, and status indicator -->
         <div class="col-lg-4">
+            <!-- Assignment info card: teacher, dates, points, time remaining -->
             <div class="card border-0 shadow-sm mb-3">
                 <div class="card-header bg-white border-0 py-3">
                     <h6 class="mb-0"><i class="fas fa-calendar-alt text-primary <?= getLanguageDirection() === 'rtl' ? 'ms-2' : 'me-2' ?>"></i><?= __('assignment_info') ?></h6>
@@ -181,7 +194,7 @@ include '../includes/header.php';
                 </div>
             </div>
 
-            
+            <!-- Status indicator card: visual status (completed, submitted, overdue, or pending) -->
             <div class="card border-0 shadow-sm">
                 <div class="card-body text-center">
                     <?php if ($submission && $submission['grade'] !== null): ?>

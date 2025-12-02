@@ -5,25 +5,30 @@ requireRole('student');
 $pageTitle = 'My Courses';
 $user = getCurrentUser();
 
+/** Handle course enrollment form submission */
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['course_code'])) {
     $courseCode = trim($_POST['course_code']);
     
+    /** Validate course code input */
     if (empty($courseCode)) {
         setFlash('danger', 'Please enter a course code.');
     } else {
+        /** Check if course exists with given code */
         $stmt = $pdo->prepare("SELECT id FROM courses WHERE course_code = ?");
         $stmt->execute([$courseCode]);
         $course = $stmt->fetch();
         
         if (!$course) {
-            setFlash('danger', 'Course not found. Please check the course code and try again.');
+            $error = 'Course not found. Please check the course code and try again.';
         } else {
+            /** Check if student is already enrolled to prevent duplicates */
             $stmt = $pdo->prepare("SELECT id FROM enrollments WHERE student_id = ? AND course_id = ?");
             $stmt->execute([$user['id'], $course['id']]);
             
             if ($stmt->fetch()) {
                 setFlash('warning', 'You are already enrolled in this course.');
             } else {
+                /** Create new enrollment record */
                 $stmt = $pdo->prepare("INSERT INTO enrollments (student_id, course_id) VALUES (?, ?)");
                 $stmt->execute([$user['id'], $course['id']]);
                 setFlash('success', 'Successfully enrolled in the course!');
@@ -35,6 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['course_code'])) {
     exit;
 }
 
+/** Retrieve all courses student is enrolled in with teacher info and content counts */
 $stmt = $pdo->prepare("
     SELECT c.*, u.full_name as teacher_name,
            (SELECT COUNT(*) FROM assignments WHERE course_id = c.id) as assignment_count,

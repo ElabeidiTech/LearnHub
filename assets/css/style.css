@@ -1,5 +1,6 @@
+/* LearnHub Main Stylesheet */
 
-
+/* CSS Variables - Global color scheme and gradients */
 :root {
     --primary-color: #4f46e5;
     --primary-dark: #4338ca;
@@ -12,12 +13,13 @@
     --gradient-primary: linear-gradient(135deg, #4f46e5 0%, #06b6d4 100%);
 }
 
-
+/* Critical Base Styles - Ensure footer stays at bottom */
 html, body {
     height: 100%;
     margin: 0;
 }
 
+/* Body flex layout to push footer to bottom */
 body {
     font-family: 'Inter', sans-serif;
     background-color: #f8fafc;
@@ -28,22 +30,25 @@ body {
     min-height: 100vh;
 }
 
+/* Main content area expands to fill space */
 main {
     flex: 1 0 auto;
 }
 
+/* Footer stays at bottom */
 footer {
     flex-shrink: 0;
 }
 
+/* General Styles */
 
-
+/* Remove underline from links with smooth transitions */
 a {
     text-decoration: none;
     transition: all 0.3s ease;
 }
 
-
+/* Hover Card Effect - Lift cards on hover with shadow */
 .hover-card {
     transition: all 0.3s ease;
 }
@@ -53,12 +58,13 @@ a {
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15) !important;
 }
 
-
+/* ===== Navigation Bar ===== */
 
 .navbar {
     padding: 1rem 0;
 }
 
+/* Navbar brand with hover scale effect */
 .navbar-brand {
     font-size: 1.5rem;
     flex-shrink: 0;
@@ -71,6 +77,7 @@ a {
     color: var(--primary-dark) !important;
 }
 
+/* Rotate icon on brand hover */
 .navbar-brand i {
     display: inline-block;
     transition: transform 0.3s ease;
@@ -84,6 +91,7 @@ a {
     flex-grow: 1;
 }
 
+/* Navigation links with rounded background on hover */
 .nav-link {
     font-weight: 500;
     padding: 0.5rem 1rem !important;
@@ -104,7 +112,8 @@ a {
     color: var(--primary-color) !important;
 }
 
-
+/* ===== Hero Section ===== */
+/* Hero section with gradient background and pattern overlay */
 .hero-section {
     background: var(--gradient-primary);
     min-height: 80vh;
@@ -114,6 +123,7 @@ a {
     overflow: hidden;
 }
 
+/* Decorative pattern overlay for hero section */
 .hero-section::before {
     content: '';
     position: absolute;
@@ -124,12 +134,14 @@ a {
     background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='m36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
 }
 
+/* Hero content positioned above pattern */
 .hero-content {
     position: relative;
     z-index: 1;
 }
 
-
+/* ===== Cards ===== */
+/* General card styles with shadow and hover effects */
 .card {
     border: none;
     border-radius: 1rem;
@@ -143,6 +155,7 @@ a {
     box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
 }
 
+/* Course card image with fixed height */
 .course-card .card-img-top {
     height: 200px;
     object-fit: cover;
@@ -154,7 +167,7 @@ a {
     left: 1rem;
 }
 
-
+/* Course Card - Overlay effect on hover */
 .course-card {
     position: relative;
 }
@@ -177,24 +190,28 @@ a {
     opacity: 1;
 }
 
-
+/* ===== Stats Section ===== */
+/* Dark background statistics section */
 .stats-section {
     background: var(--dark-color);
     padding: 4rem 0;
 }
 
+/* Individual stat item with padding */
 .stat-item {
     text-align: center;
     padding: 2rem;
 }
 
+/* Large animated stat number */
 .stat-number {
     font-size: 3rem;
     font-weight: 700;
     color: var(--primary-color);
 }
 
-
+/* ===== Category Cards ===== */
+/* Category cards with icon and hover gradient */
 .category-card {
     text-align: center;
     padding: 2rem;
@@ -208,6 +225,7 @@ a {
     color: white;
 }
 
+/* Category card icon circle */
 .category-card .icon {
     width: 80px;
     height: 80px;
@@ -227,7 +245,8 @@ a {
     color: white;
 }
 
-
+/* ===== Buttons ===== */
+/* Primary button styles */
 .btn-primary {
     background: var(--primary-color);
     border-color: var(--primary-color);
@@ -241,6 +260,7 @@ a {
     border-color: var(--primary-dark);
 }
 
+/* Outline primary button */
 .btn-outline-primary {
     border-color: var(--primary-color);
     color: var(--primary-color);
@@ -254,7 +274,8 @@ a {
     border-color: var(--primary-color);
 }
 
-
+/* ===== Forms ===== */
+/* Form control inputs with focus effect */
 .form-control {
     padding: 0.75rem 1rem;
     border-radius: 0.5rem;
@@ -267,12 +288,14 @@ a {
     box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
 }
 
+/* Bold form labels */
 .form-label {
     font-weight: 500;
     color: var(--dark-color);
 }
 
-
+/* ===== Authentication Pages ===== */
+/* Auth page wrapper with gradient background */
 .auth-wrapper {
     min-height: 100vh;
     display: flex;
@@ -280,6 +303,7 @@ a {
     background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
 }
 
+/* Auth card with shadow and rounded corners */
 .auth-card {
     max-width: 450px;
     width: 100%;
@@ -290,6 +314,7 @@ a {
     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1);
 }
 
+/* Auth card logo with hover effect */
 .auth-card .logo {
     font-size: 2rem;
     margin-bottom: 1.5rem;
@@ -313,7 +338,8 @@ a {
     transform: rotate(-10deg);
 }
 
-
+/* ===== Dashboard ===== */
+/* Dashboard sidebar with shadow */
 .dashboard-sidebar {
     background: white;
     min-height: calc(100vh - 76px);
@@ -334,12 +360,14 @@ a {
     border-left-color: var(--primary-color);
 }
 
+/* Dashboard main content area */
 .dashboard-content {
     padding: 2rem;
     background: #f8fafc;
     min-height: calc(100vh - 76px);
 }
 
+/* Dashboard card with rounded corners */
 .dashboard-card {
     background: white;
     border-radius: 1rem;
@@ -348,10 +376,12 @@ a {
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
 }
 
+/* Stat cards with colored left border */
 .stat-card {
     border-left: 4px solid var(--primary-color);
 }
 
+/* Stat card color variants */
 .stat-card.success {
     border-left-color: var(--success-color);
 }
@@ -364,28 +394,33 @@ a {
     border-left-color: var(--secondary-color);
 }
 
-
+/* ===== Progress Bars ===== */
+/* Custom progress bar styling */
 .progress {
     height: 8px;
     border-radius: 4px;
     background: #e2e8f0;
 }
 
+/* Progress bar fill with gradient */
 .progress-bar {
     background: var(--gradient-primary);
     border-radius: 4px;
 }
 
-
+/* ===== Rating Stars ===== */
+/* Filled star rating color */
 .rating {
     color: #fbbf24;
 }
 
+/* Empty star rating color */
 .rating .empty {
     color: #d1d5db;
 }
 
-
+/* ===== Lesson List ===== */
+/* Individual lesson item with hover effect */
 .lesson-item {
     padding: 1rem;
     border-bottom: 1px solid #e2e8f0;
@@ -403,6 +438,7 @@ a {
     background: rgba(16, 185, 129, 0.05);
 }
 
+/* Circular lesson number badge */
 .lesson-item .lesson-number {
     width: 40px;
     height: 40px;
@@ -419,13 +455,15 @@ a {
     background: var(--success-color);
 }
 
-
+/* ===== Tables ===== */
+/* Table with rounded corners */
 .table {
     background: white;
     border-radius: 0.5rem;
     overflow: hidden;
 }
 
+/* Table header styling */
 .table thead th {
     background: #f8fafc;
     border: none;
@@ -434,39 +472,46 @@ a {
     color: var(--dark-color);
 }
 
+/* Table body cell styling */
 .table tbody td {
     padding: 1rem;
     vertical-align: middle;
 }
 
-
+/* ===== Badges ===== */
+/* Rounded badge styling */
 .badge {
     padding: 0.5rem 1rem;
     border-radius: 2rem;
     font-weight: 500;
 }
 
-
+/* ===== Animations ===== */
+/* Fade in animation utility class */
 .fade-in {
     animation: fadeIn 0.5s ease-in-out;
 }
 
+/* Fade in keyframes */
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(20px); }
     to { opacity: 1; transform: translateY(0); }
 }
 
-
+/* ===== Teacher Verification Styles ===== */
+/* Suspended teacher text styling */
 .suspended-teacher {
     color: #dc3545 !important;
     font-weight: bold !important;
 }
 
+/* Suspended teacher row background */
 .suspended-row {
     background-color: #ffe6e6 !important;
 }
 
-
+/* ===== Avatar Styles ===== */
+/* Avatar size variations */
 .avatar-sm {
     width: 32px;
     height: 32px;
@@ -491,7 +536,8 @@ a {
     font-size: 3rem;
 }
 
-
+/* ===== Icon Circles ===== */
+/* Icon circle size variations */
 .icon-circle-sm {
     width: 32px;
     height: 32px;
@@ -516,12 +562,14 @@ a {
     font-size: 1.25rem;
 }
 
-
+/* ===== Quick Actions Button ===== */
+/* Minimum width for quick action buttons */
 .quick-action-btn {
     min-width: 180px;
 }
 
-
+/* ===== Course Card Hover ===== */
+/* Clickable course card with lift effect */
 .course-card-hover {
     cursor: pointer;
     transition: transform 0.2s;
@@ -531,14 +579,16 @@ a {
     transform: translateY(-5px);
 }
 
-
+/* ===== Assignment Status Icons ===== */
+/* Fixed width assignment status icon */
 .assignment-status-icon {
     width: 48px;
     height: 48px;
     min-width: 48px;
 }
 
-
+/* ===== Grade Circle ===== */
+/* Circular grade display */
 .grade-circle {
     width: 50px;
     height: 50px;
@@ -552,7 +602,8 @@ a {
     font-size: 0.9rem;
 }
 
-
+/* ===== File Upload Area ===== */
+/* Drag and drop file upload area */
 .file-upload-area {
     cursor: pointer;
     background: #f8f9fa;
@@ -563,36 +614,42 @@ a {
     background: #e9ecef;
 }
 
-
+/* ===== Question Card ===== */
+/* Quiz question card styling */
 .question-card {
     border-color: #cbd5e1;
     background: #f8fafc;
 }
 
-
+/* ===== File Preview ===== */
+/* Iframe for file preview */
 .file-preview-iframe {
     width: 100%;
     height: 80vh;
     border: none;
 }
 
+/* Image file preview */
 .file-preview-img {
     max-height: 80vh;
 }
 
-
+/* ===== Text Pre-wrap ===== */
+/* Preserve whitespace and line breaks */
 .text-pre-wrap {
     white-space: pre-wrap;
 }
 
-
+/* ===== Social Media Buttons ===== */
+/* Fixed size social media icon buttons */
 .social-btn {
     width: 36px;
     height: 36px;
     padding: 0;
 }
 
-
+/* ===== Hover Shadow ===== */
+/* Add shadow on hover utility class */
 .hover-shadow {
     transition: box-shadow 0.3s;
 }
@@ -601,7 +658,8 @@ a {
     box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
 }
 
-
+/* ===== Utility Classes ===== */
+/* Cursor pointer utility */
 .cursor-pointer {
     cursor: pointer;
 }
@@ -610,7 +668,8 @@ a {
     white-space: pre-wrap;
 }
 
-
+/* ===== RTL Support for Arabic ===== */
+/* Right-to-left text direction for Arabic language */
 body[dir="rtl"] {
     text-align: right;
     direction: rtl;
@@ -620,6 +679,7 @@ body[dir="rtl"] .container {
     direction: rtl;
 }
 
+/* RTL navbar container layout */
 body[dir="rtl"] .navbar {
     direction: rtl;
 }
@@ -650,6 +710,7 @@ body[dir="rtl"] .navbar-nav {
     direction: rtl;
 }
 
+/* RTL navigation links alignment */
 body[dir="rtl"] .nav-link {
     text-align: right;
     flex-direction: row-reverse;
@@ -665,6 +726,7 @@ body[dir="rtl"] .btn {
     flex-direction: row-reverse;
 }
 
+/* RTL dropdown menu alignment */
 body[dir="rtl"] .dropdown-menu {
     text-align: right;
     direction: rtl;
@@ -687,6 +749,7 @@ body[dir="rtl"] .dropdown-item i {
     margin-left: 0.5rem !important;
 }
 
+/* RTL margin utility overrides */
 body[dir="rtl"] .me-1,
 body[dir="rtl"] .me-2,
 body[dir="rtl"] .me-3 {
@@ -704,6 +767,7 @@ body[dir="rtl"] .ms-auto {
     margin-left: 0 !important;
 }
 
+/* RTL text alignment overrides */
 body[dir="rtl"] .text-start {
     text-align: right !important;
 }
@@ -712,6 +776,7 @@ body[dir="rtl"] .text-end {
     text-align: left !important;
 }
 
+/* RTL float utility overrides */
 body[dir="rtl"] .float-end {
     float: left !important;
 }
@@ -725,6 +790,7 @@ body[dir="rtl"] .navbar-toggler {
     margin-right: auto;
 }
 
+/* RTL input group border radius */
 body[dir="rtl"] .input-group-text {
     border-radius: 0 0.5rem 0.5rem 0;
 }
@@ -733,6 +799,7 @@ body[dir="rtl"] .input-group > .form-control {
     border-radius: 0.5rem 0 0 0.5rem;
 }
 
+/* RTL dashboard sidebar border */
 body[dir="rtl"] .dashboard-sidebar .nav-link {
     border-left: none;
     border-right: 3px solid transparent;
@@ -744,6 +811,7 @@ body[dir="rtl"] .dashboard-sidebar .nav-link.active {
     border-left-color: transparent;
 }
 
+/* RTL stat card right border */
 body[dir="rtl"] .stat-card {
     border-left: none;
     border-right: 4px solid var(--primary-color);
@@ -761,6 +829,7 @@ body[dir="rtl"] .stat-card.info {
     border-right-color: var(--secondary-color);
 }
 
+/* RTL flex direction */
 body[dir="rtl"] .d-flex {
     direction: rtl;
 }
@@ -780,6 +849,7 @@ body[dir="rtl"] .category-card .icon {
     margin: 0 auto 1rem;
 }
 
+/* RTL hero section text alignment */
 body[dir="rtl"] .hero-content {
     text-align: right;
 }
@@ -789,11 +859,13 @@ body[dir="rtl"] .hero-section p {
     text-align: right;
 }
 
-
+/* ===== Footer RTL ===== */
+/* RTL footer text alignment */
 body[dir="rtl"] footer {
     text-align: right;
 }
 
+/* RTL footer list alignment */
 body[dir="rtl"] footer .list-unstyled {
     text-align: right;
 }
@@ -821,12 +893,13 @@ body[dir="rtl"] .align-items-center {
     text-align: right;
 }
 
-
+/* Center feature icons even in RTL */
 body[dir="rtl"] .features h2 {
     text-align: center;
 }
 
-
+/* ===== Responsive ===== */
+/* Mobile and tablet responsive styles */
 @media (max-width: 768px) {
     .hero-section {
         min-height: 60vh;
@@ -851,15 +924,18 @@ body[dir="rtl"] .features h2 {
     }
 }
 
-
+/* ===== Custom Scrollbar ===== */
+/* Webkit browser scrollbar width */
 ::-webkit-scrollbar {
     width: 8px;
 }
 
+/* Scrollbar track background */
 ::-webkit-scrollbar-track {
     background: #f1f1f1;
 }
 
+/* Scrollbar thumb with primary color */
 ::-webkit-scrollbar-thumb {
     background: var(--primary-color);
     border-radius: 4px;
@@ -869,7 +945,8 @@ body[dir="rtl"] .features h2 {
     background: var(--primary-dark);
 }
 
-
+/* ===== Toast Notifications ===== */
+/* Fixed position toast container */
 .toast-container {
     position: fixed;
     top: 100px;
@@ -877,7 +954,8 @@ body[dir="rtl"] .features h2 {
     z-index: 9999;
 }
 
-
+/* ===== Image Placeholders ===== */
+/* Gradient placeholder for missing images */
 .img-placeholder {
     background: var(--gradient-primary);
     display: flex;
@@ -887,7 +965,7 @@ body[dir="rtl"] .features h2 {
     font-size: 3rem;
 }
 
-
+/* Course thumbnail placeholder with gradient */
 .course-thumbnail {
     height: 200px;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -898,7 +976,8 @@ body[dir="rtl"] .features h2 {
     font-size: 3rem;
 }
 
-
+/* ===== Video Player ===== */
+/* Responsive video container with 16:9 aspect ratio */
 .video-container {
     position: relative;
     padding-bottom: 56.25%;
@@ -908,6 +987,7 @@ body[dir="rtl"] .features h2 {
     background: var(--dark-color);
 }
 
+/* Video iframe fills container */
 .video-container iframe {
     position: absolute;
     top: 0;
@@ -916,25 +996,29 @@ body[dir="rtl"] .features h2 {
     height: 100%;
 }
 
-
+/* ===== Empty State ===== */
+/* Empty state message display */
 .empty-state {
     text-align: center;
     padding: 4rem 2rem;
 }
 
+/* Large icon for empty state */
 .empty-state .icon {
     font-size: 4rem;
     color: #d1d5db;
     margin-bottom: 1rem;
 }
 
-
+/* ===== University Logos Carousel ===== */
+/* Infinite scrolling logo carousel wrapper */
 .university-logos-wrapper {
     overflow: hidden;
     position: relative;
     padding: 20px 0;
 }
 
+/* Logo track with infinite scroll animation */
 .university-logos-track {
     display: flex;
     gap: 60px;
@@ -942,6 +1026,7 @@ body[dir="rtl"] .features h2 {
     will-change: transform;
 }
 
+/* Individual logo item container */
 .university-logo-item {
     flex-shrink: 0;
     display: flex;
@@ -950,6 +1035,7 @@ body[dir="rtl"] .features h2 {
     min-width: 150px;
 }
 
+/* University logo image with grayscale effect */
 .university-logo-item img {
     max-height: 80px;
     max-width: 150px;
@@ -965,6 +1051,7 @@ body[dir="rtl"] .features h2 {
     transform: scale(1.1);
 }
 
+/* Infinite scroll left animation */
 @keyframes scroll-left {
     from {
         transform: translateX(0);
@@ -974,25 +1061,29 @@ body[dir="rtl"] .features h2 {
     }
 }
 
-
+/* ===== Features Section ===== */
+/* Features section layout */
 .features {
     padding: 4rem 2rem;
     max-width: 1200px;
     margin: 0 auto;
 }
 
+/* Features section heading */
 .features h2 {
     text-align: center;
     margin-bottom: 3rem;
     font-size: 2rem;
 }
 
+/* Responsive feature grid */
 .feature-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     gap: 2rem;
 }
 
+/* Individual feature card */
 .feature-card {
     background: #f8fafc;
     border-radius: 16px;
@@ -1006,6 +1097,7 @@ body[dir="rtl"] .features h2 {
     box-shadow: 0 20px 40px rgba(0,0,0,0.1);
 }
 
+/* Feature card icon container */
 .feature-card .icon {
     width: 80px;
     height: 80px;
@@ -1017,6 +1109,7 @@ body[dir="rtl"] .features h2 {
     font-size: 2rem;
 }
 
+/* Icon color variants for different feature types */
 .feature-card .icon-primary {
     background: rgba(79, 70, 229, 0.1);
     color: var(--primary-color);
@@ -1051,33 +1144,39 @@ body[dir="rtl"] .features h2 {
     margin-bottom: 0.75rem;
 }
 
+/* Feature card description text */
 .feature-card p {
     color: #64748b;
     margin: 0;
 }
 
-
+/* ===== Roles Section ===== */
+/* Roles section with background */
 .roles {
     background: #f8fafc;
     padding: 4rem 2rem;
 }
 
+/* Roles section container */
 .roles-container {
     max-width: 1000px;
     margin: 0 auto;
 }
 
+/* Roles section heading */
 .roles h2 {
     text-align: center;
     margin-bottom: 3rem;
 }
 
+/* Role cards responsive grid */
 .role-cards {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 2rem;
 }
 
+/* Individual role card */
 .role-card {
     background: white;
     border-radius: 16px;
@@ -1085,6 +1184,7 @@ body[dir="rtl"] .features h2 {
     box-shadow: 0 10px 30px rgba(0,0,0,0.08);
 }
 
+/* Role card heading with icon */
 .role-card h3 {
     display: flex;
     align-items: center;
@@ -1092,12 +1192,14 @@ body[dir="rtl"] .features h2 {
     margin-bottom: 1.5rem;
 }
 
+/* Role card feature list */
 .role-card ul {
     list-style: none;
     padding: 0;
     margin: 0;
 }
 
+/* Role card list items */
 .role-card li {
     padding: 0.5rem 0;
     display: flex;
@@ -1105,6 +1207,7 @@ body[dir="rtl"] .features h2 {
     gap: 0.75rem;
 }
 
+/* Role card check icon color */
 .role-card li i {
     color: var(--success-color);
 }

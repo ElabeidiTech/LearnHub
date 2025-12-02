@@ -5,6 +5,8 @@ requireApprovedTeacher();
 $user = getCurrentUser();
 $submissionId = $_GET['id'] ?? 0;
 
+/** Retrieve submission details with assignment, course, and student info */
+/** Verify teacher owns the course this submission belongs to (security check) */
 $stmt = $pdo->prepare("
     SELECT s.*, a.title as assignment_title, a.description as assignment_desc, a.total_points, a.due_date,
            c.course_code, c.course_name, u.full_name as student_name, u.email as student_email
@@ -17,6 +19,7 @@ $stmt = $pdo->prepare("
 $stmt->execute([$submissionId, $user['id']]);
 $submission = $stmt->fetch();
 
+/** Redirect if submission not found or teacher doesn't own the course */
 if (!$submission) {
     setFlash('danger', 'Submission not found.');
     header('Location: gradebook.php');
@@ -26,15 +29,19 @@ if (!$submission) {
 $pageTitle = 'Grade: ' . $submission['assignment_title'];
 $error = '';
 
+/** Handle grade submission form POST request */
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    /** Extract grade and feedback from form */
     $grade = $_POST['grade'] ?? '';
     $feedback = trim($_POST['feedback'] ?? '');
     
+    /** Validate grade is numeric and within valid range (0 to assignment max points) */
     if ($grade === '' || !is_numeric($grade)) {
         $error = 'Please enter a valid grade.';
     } elseif ($grade < 0 || $grade > $submission['total_points']) {
         $error = 'Grade must be between 0 and ' . $submission['total_points'] . '.';
     } else {
+        /** Update submission with grade and feedback, set graded timestamp */
         $stmt = $pdo->prepare("UPDATE submissions SET grade = ?, feedback = ?, graded_at = NOW() WHERE id = ?");
         
         if ($stmt->execute([intval($grade), $feedback, $submissionId])) {
@@ -50,13 +57,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 include '../includes/header.php';
 ?>
 
+<!-- Main container for grade submission page -->
 <div class="container my-5">
+    <!-- Back to Gradebook Link -->
     <a href="gradebook.php" class="btn btn-outline-secondary mb-3">
         <i class="fas fa-arrow-left <?= getLanguageDirection() === 'rtl' ? 'ms-1' : 'me-1' ?>"></i><?= __('back_to_gradebook') ?>
     </a>
 
+    <!-- Two-column layout: Submission details (left) and grading form (right) -->
     <div class="row g-4">
         
+        <!-- Left Column: Submission and assignment details -->
         <div class="col-lg-6">
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-header bg-white border-0 py-3 d-flex justify-content-between align-items-center">
@@ -102,19 +113,22 @@ include '../includes/header.php';
                         </div>
                     </div>
 
-                    <?php if (strtotime($submission['submitted_at']) > strtotime($submission['due_date'])): ?>
+                    <?php 
+                    /** Display warning if submission was submitted after due date */
+                    if (strtotime($submission['submitted_at']) > strtotime($submission['due_date'])): ?>
                         <div class="alert alert-warning" role="alert">
                             <i class="fas fa-exclamation-triangle <?= getLanguageDirection() === 'rtl' ? 'ms-1' : 'me-1' ?>"></i>
                             <?= __('late_submission') ?>: <?= round((strtotime($submission['submitted_at']) - strtotime($submission['due_date'])) / 3600, 1) ?> <?= __('hours') ?>
                         </div>
                     <?php endif; ?>
 
-                    
+                    <!-- Submitted file display with preview and download options -->
                     <?php if ($submission['file_name']): ?>
                         <h6 class="mt-4 mb-3"><?= __('submitted_file') ?></h6>
                         <div class="list-group-item d-flex align-items-center gap-3 p-3 rounded mb-3">
                             <div class="flex-shrink-0">
                                 <?php
+                                /** Detect file type and assign appropriate icon and color */
                                 $fileExt = strtolower(pathinfo($submission['file_name'], PATHINFO_EXTENSION));
                                 $iconClass = 'fa-file';
                                 $iconColor = 'text-secondary';
@@ -159,7 +173,9 @@ include '../includes/header.php';
                         </div>
                     <?php endif; ?>
 
-                    <?php if ($submission['comment']): ?>
+                    <?php 
+                    /** Display student's optional comment if provided */
+                    if ($submission['comment']): ?>
                         <h6 class="mt-4 mb-3"><?= __('student_comment') ?></h6>
                         <div class="bg-light p-3 rounded">
                             <p class="mb-0 small"><?= sanitize($submission['comment']) ?></p>
@@ -169,7 +185,7 @@ include '../includes/header.php';
             </div>
         </div>
 
-        
+        <!-- Right Column: Grading form with grade input and feedback -->
         <div class="col-lg-6">
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-header bg-white border-0 py-3">
@@ -177,6 +193,7 @@ include '../includes/header.php';
                 </div>
                 <div class="card-body">
                     <?php if ($error): ?>
+                        <!-- Error alert for grade validation failures -->
                         <div class="alert alert-danger alert-dismissible fade show" role="alert">
                             <i class="fas fa-exclamation-circle <?= getLanguageDirection() === 'rtl' ? 'ms-2' : 'me-2' ?>"></i>
                             <?= sanitize($error) ?>
@@ -184,17 +201,19 @@ include '../includes/header.php';
                         </div>
                     <?php endif; ?>
 
+                    <!-- Grading form with grade input, quick grade buttons, and feedback textarea -->
                     <form method="POST">
+                        <!-- Grade input field with large numeric input -->
                         <div class="mb-4">
                             <label class="form-label fw-semibold"><?= __('grade') ?> (<?= __('out_of') ?> <?= $submission['total_points'] ?>) *</label>
                             <div class="d-flex align-items-center gap-2">
                                 <input type="number" name="grade" class="form-control form-control-lg text-center" style="width: 120px; font-size: 1.5rem;"
-                                       value="<?= $submission['grade'] ?? '' ?>" min="0" max="<?= $submission['total_points'] ?>" required>
+                                    value="<?= $submission['grade'] ?? '' ?>" min="0" max="<?= $submission['total_points'] ?>" required>
                                 <span class="fs-4 text-muted">/ <?= $submission['total_points'] ?></span>
                             </div>
                         </div>
 
-                        
+                        <!-- Quick grade percentage buttons for common grade values -->
                         <div class="mb-4">
                             <label class="form-label fw-semibold"><?= __('quick_grade') ?></label>
                             <div class="d-flex gap-2 flex-wrap">
@@ -208,11 +227,13 @@ include '../includes/header.php';
                             </div>
                         </div>
 
+                        <!-- Optional feedback textarea for teacher comments -->
                         <div class="mb-4">
                             <label class="form-label fw-semibold"><?= __('feedback') ?> (<?= __('optional') ?>)</label>
                             <textarea name="feedback" class="form-control" rows="6" placeholder="<?= __('provide_feedback') ?>"><?= sanitize($submission['feedback'] ?? '') ?></textarea>
                         </div>
 
+                        <!-- Form action buttons: cancel and save grade -->
                         <div class="d-flex justify-content-between gap-2">
                             <a href="gradebook.php" class="btn btn-outline-secondary"><?= __('cancel') ?></a>
                             <button type="submit" class="btn btn-success btn-lg">
@@ -226,9 +247,10 @@ include '../includes/header.php';
     </div>
 </div>
 
-
+<!-- File preview modal for PDF, images, and text files -->
 <?php if ($submission['file_name']): ?>
     <?php
+    /** Prepare file path and extension for preview modal */
     $fileExt = strtolower(pathinfo($submission['file_name'], PATHINFO_EXTENSION));
     $filePath = SITE_URL . '/uploads/' . $submission['file_path'];
     ?>
@@ -243,7 +265,9 @@ include '../includes/header.php';
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body p-0" style="min-height: 500px;">
-                    <?php if ($fileExt === 'pdf'): ?>
+                    <?php 
+                    /** Render file preview based on file type: iframe for PDF/text, img tag for images */
+                    if ($fileExt === 'pdf'): ?>
                         <iframe src="<?= $filePath ?>" class="file-preview-iframe"></iframe>
                     <?php elseif (in_array($fileExt, ['jpg', 'jpeg', 'png', 'gif'])): ?>
                         <div class="text-center p-4" style="background: #f8f9fa;">

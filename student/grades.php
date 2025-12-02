@@ -5,6 +5,7 @@ requireRole('student');
 $pageTitle = 'My Grades';
 $user = getCurrentUser();
 
+/** Retrieve all graded assignment submissions with course information */
 $stmt = $pdo->prepare("
     SELECT s.grade, s.graded_at, s.feedback, a.title, a.total_points, c.course_code, c.course_name
     FROM submissions s
@@ -16,6 +17,7 @@ $stmt = $pdo->prepare("
 $stmt->execute([$user['id']]);
 $assignmentGrades = $stmt->fetchAll();
 
+/** Retrieve all completed quiz attempts with scores and course information */
 $stmt = $pdo->prepare("
     SELECT qa.score, qa.total_points, qa.completed_at, q.title, c.course_code, c.course_name
     FROM quiz_attempts qa
@@ -27,6 +29,7 @@ $stmt = $pdo->prepare("
 $stmt->execute([$user['id']]);
 $quizGrades = $stmt->fetchAll();
 
+/** Calculate overall grade statistics by summing all earned and possible points */
 $totalEarned = 0;
 $totalPossible = 0;
 
@@ -44,10 +47,11 @@ $overallPercent = $totalPossible > 0 ? round(($totalEarned / $totalPossible) * 1
 include '../includes/header.php';
 ?>
 
+<!-- Main container for grades overview page -->
 <div class="container my-5">
     <h2 class="mb-4"><i class="fas fa-chart-line text-success <?= getLanguageDirection() === 'rtl' ? 'ms-2' : 'me-2' ?>"></i><?= __('my_grades') ?></h2>
 
-    
+    <!-- Statistics cards showing overall average, assignment count, quiz count, and total points -->
     <div class="row g-4 mb-4">
         <div class="col-md-3">
             <div class="card text-center h-100 border-0 shadow-sm">
@@ -95,8 +99,9 @@ include '../includes/header.php';
         </div>
     </div>
 
+    <!-- Two-column layout for assignment grades and quiz grades tables -->
     <div class="row g-4">
-        
+        <!-- Left column: Assignment grades table -->
         <div class="col-lg-6">
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-header bg-white border-0 py-3">

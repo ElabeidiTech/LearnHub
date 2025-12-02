@@ -1,20 +1,33 @@
 <?php
+/**
+ * Teacher Dashboard - Main page for approved teacher users
+ * Displays courses, student count, pending submissions, and recent quiz attempts
+ */
+
+// Load configuration and require approved teacher status
 require_once '../config/config.php';
 requireApprovedTeacher();
 
+// Set page title
 $pageTitle = 'Dashboard';
+
+// Get current user data
 $user = getCurrentUser();
 
+// Initialize dashboard statistics variables
 $coursesCount = 0;
 $studentsCount = 0;
 $pendingSubmissions = [];
 $recentQuizzes = [];
 
+// Fetch dashboard data if database connection is available
 if ($pdo) {
+    // Get total number of courses created by this teacher
     $stmt = $pdo->prepare("SELECT COUNT(*) FROM courses WHERE teacher_id = ?");
     $stmt->execute([$user['id']]);
     $coursesCount = $stmt->fetchColumn();
 
+    // Get total number of unique students enrolled in teacher's courses
     $stmt = $pdo->prepare("
         SELECT COUNT(DISTINCT e.student_id) 
         FROM enrollments e 
@@ -24,6 +37,7 @@ if ($pdo) {
     $stmt->execute([$user['id']]);
     $studentsCount = $stmt->fetchColumn();
 
+    // Get recent ungraded submissions (limit 10)
     $stmt = $pdo->prepare("
         SELECT s.*, a.title as assignment_title, a.total_points, c.course_code, u.full_name as student_name
         FROM submissions s
@@ -37,6 +51,7 @@ if ($pdo) {
     $stmt->execute([$user['id']]);
     $pendingSubmissions = $stmt->fetchAll();
 
+    // Get recent completed quiz attempts (limit 5)
     $stmt = $pdo->prepare("
         SELECT qa.*, q.title as quiz_title, c.course_code, u.full_name as student_name
         FROM quiz_attempts qa
@@ -51,14 +66,18 @@ if ($pdo) {
     $recentQuizzes = $stmt->fetchAll();
 }
 
+// Include header with navigation
 include '../includes/header.php';
 ?>
 
+<!-- Main container for teacher dashboard -->
 <div class="container my-5">
+    <!-- Welcome message with teacher name -->
     <h2 class="mb-4"><?= __('welcome') ?>, <?= sanitize($user['full_name']) ?>!</h2>
 
-    
+    <!-- Dashboard statistics cards showing courses, students, pending grades, and recent quizzes -->
     <div class="row g-4 mb-4">
+        <!-- Courses Count Card -->
         <div class="col-md-3">
             <a href="courses.php" class="text-decoration-none">
                 <div class="card text-center h-100 border-0 shadow-sm hover-shadow">
@@ -107,7 +126,7 @@ include '../includes/header.php';
         </div>
     </div>
 
-    
+    <!-- Quick actions card with buttons for common teacher tasks -->
     <div class="card mb-4 border-0 shadow-sm">
         <div class="card-header bg-white border-0 py-3">
             <h5 class="mb-0"><i class="fas fa-bolt text-warning <?= getLanguageDirection() === 'rtl' ? 'ms-2' : 'me-2' ?>"></i><?= __('quick_actions') ?></h5>
@@ -136,7 +155,7 @@ include '../includes/header.php';
         </div>
     </div>
 
-    
+    <!-- Pending submissions table card for grading student work -->
     <div class="card border-0 shadow-sm">
         <div class="card-header bg-white border-0 py-3 d-flex justify-content-between align-items-center">
             <h5 class="mb-0"><i class="fas fa-inbox text-warning <?= getLanguageDirection() === 'rtl' ? 'ms-2' : 'me-2' ?>"></i><?= __('submissions_to_grade') ?></h5>

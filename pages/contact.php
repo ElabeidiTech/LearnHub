@@ -3,6 +3,7 @@ $pageTitle = 'Contact Us';
 require_once __DIR__ . '/../includes/header.php';
 ?>
 
+<!-- Main contact section with centered layout -->
 <section class="py-5">
     <div class="container">
         <div class="row justify-content-center">
@@ -10,6 +11,7 @@ require_once __DIR__ . '/../includes/header.php';
                 <h1 class="display-5 fw-bold mb-4"><?= __('contact_us') ?></h1>
                 <p class="lead mb-5"><?= __('contact_subtitle') ?></p>
                 
+                <!-- Contact information cards (email, phone, address) -->
                 <div class="row g-4 mb-5">
                     <div class="col-md-4">
                         <div class="text-center p-4 bg-light rounded">
@@ -34,6 +36,7 @@ require_once __DIR__ . '/../includes/header.php';
                     </div>
                 </div>
                 
+                <!-- Contact form card for sending messages -->
                 <div class="card shadow-sm">
                     <div class="card-body p-4">
                         <form>

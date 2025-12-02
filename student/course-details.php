@@ -5,6 +5,7 @@ requireRole('student');
 $user = getCurrentUser();
 $courseId = $_GET['id'] ?? 0;
 
+/** Verify student is enrolled in this course and retrieve course details with teacher info */
 $stmt = $pdo->prepare("
     SELECT c.*, u.full_name as teacher_name,
            e.id as enrollment_id
@@ -16,12 +17,14 @@ $stmt = $pdo->prepare("
 $stmt->execute([$courseId, $user['id']]);
 $course = $stmt->fetch();
 
+/** Redirect if course not found or student not enrolled */
 if (!$course) {
     setFlash('danger', 'Course not found or you are not enrolled.');
     header('Location: course.php');
     exit;
 }
 
+/** Retrieve all assignments for this course with student's submission status and grades */
 $stmt = $pdo->prepare("
     SELECT a.*,
            s.id as submission_id,
@@ -36,6 +39,7 @@ $stmt = $pdo->prepare("
 $stmt->execute([$user['id'], $courseId]);
 $assignments = $stmt->fetchAll();
 
+/** Retrieve all quizzes with student's attempt count and best score */
 $stmt = $pdo->prepare("
     SELECT q.*,
            (SELECT COUNT(*) FROM quiz_attempts WHERE quiz_id = q.id AND student_id = ? AND completed_at IS NOT NULL) as completed_attempts,
@@ -47,6 +51,7 @@ $stmt = $pdo->prepare("
 $stmt->execute([$user['id'], $user['id'], $courseId]);
 $quizzes = $stmt->fetchAll();
 
+/** Retrieve all downloadable course materials ordered by upload date */
 $stmt = $pdo->prepare("
     SELECT m.*
     FROM materials m
@@ -60,8 +65,10 @@ $pageTitle = $course['course_name'];
 include '../includes/header.php';
 ?>
 
+<!-- Main container for course details page -->
 <div class="container my-5">
     
+    <!-- Course header card: course name, code, teacher, and description -->
     <div class="card border-0 shadow-sm mb-4">
         <div class="card-body">
             <div class="d-flex justify-content-between align-items-start">
@@ -85,6 +92,7 @@ include '../includes/header.php';
         </div>
     </div>
 
+    <!-- Tab navigation for assignments, quizzes, materials, and grades sections -->
     <ul class="nav nav-tabs mb-4" role="tablist">
         <li class="nav-item" role="presentation">
             <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#assignments-tab" type="button">
@@ -108,8 +116,10 @@ include '../includes/header.php';
         </li>
     </ul>
 
+    <!-- Tab content panels -->
     <div class="tab-content">
         
+        <!-- Assignments tab: all course assignments with submission status and grades -->
         <div class="tab-pane fade show active" id="assignments-tab">
             <?php if (empty($assignments)): ?>
                 <div class="card border-0 shadow-sm">
@@ -174,7 +184,7 @@ include '../includes/header.php';
             <?php endif; ?>
         </div>
 
-        
+        <!-- Quizzes tab: all course quizzes with attempt tracking and best scores -->
         <div class="tab-pane fade" id="quizzes-tab">
             <?php if (empty($quizzes)): ?>
                 <div class="card border-0 shadow-sm">
@@ -250,6 +260,7 @@ include '../includes/header.php';
             <?php endif; ?>
         </div>
 
+        <!-- Materials tab: downloadable course files and resources -->
         <div class="tab-pane fade" id="materials" role="tabpanel">
             <?php if (empty($materials)): ?>
                 <div class="card border-0 shadow-sm">
@@ -259,6 +270,7 @@ include '../includes/header.php';
                     </div>
                 </div>
             <?php else: ?>
+                <!-- Material items: file name, icon, upload date, and download button -->
                 <div class="list-group">
                     <?php foreach ($materials as $material): ?>
                         <div class="list-group-item">
@@ -294,12 +306,14 @@ include '../includes/header.php';
             <?php endif; ?>
         </div>
 
-        
+        <!-- Grades tab: course average, assignment grades, and quiz scores -->
         <div class="tab-pane fade" id="grades-tab">
             <?php
+            /** Filter assignments and quizzes that have been graded */
             $assignmentGrades = array_filter($assignments, function($a) { return $a['grade'] !== null; });
             $quizGrades = array_filter($quizzes, function($q) { return $q['best_score'] !== null; });
             
+            /** Calculate total earned points and total possible points across all graded items */
             $totalEarned = 0;
             $totalPossible = 0;
             
@@ -315,10 +329,11 @@ include '../includes/header.php';
                 $totalPossible += $quizData['total_points'];
             }
             
+            /** Calculate overall course average as percentage */
             $courseAverage = $totalPossible > 0 ? round(($totalEarned / $totalPossible) * 100, 1) : 0;
             ?>
             
-            
+            <!-- Statistics cards: course average percentage, graded assignments count, completed quizzes count -->
             <div class="row g-3 mb-4">
                 <div class="col-md-4">
                     <div class="card border-0 shadow-sm text-center">
@@ -349,7 +364,7 @@ include '../includes/header.php';
                 </div>
             </div>
 
-            
+            <!-- Assignment grades table with grade, graded date, and feedback columns -->
             <?php if (!empty($assignmentGrades)): ?>
                 <div class="card border-0 shadow-sm mb-4">
                     <div class="card-header bg-white py-3">
@@ -392,7 +407,7 @@ include '../includes/header.php';
                 </div>
             <?php endif; ?>
 
-            
+            <!-- Quiz grades table with best score, percentage, and attempts used -->
             <?php if (!empty($quizGrades)): ?>
                 <div class="card border-0 shadow-sm">
                     <div class="card-header bg-white py-3">

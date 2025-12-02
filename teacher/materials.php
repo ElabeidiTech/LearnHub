@@ -5,32 +5,40 @@ requireApprovedTeacher();
 $pageTitle = 'Course Materials';
 $user = getCurrentUser();
 
+/** Retrieve all courses taught by current teacher for material upload dropdown */
 $stmt = $pdo->prepare("SELECT * FROM courses WHERE teacher_id = ? ORDER BY course_code");
 $stmt->execute([$user['id']]);
 $courses = $stmt->fetchAll();
 
+/** Handle material upload or deletion POST requests */
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    /** Process material deletion request */
     if (isset($_POST['action']) && $_POST['action'] === 'delete') {
         $materialId = $_POST['material_id'] ?? 0;
         
+        /** Verify teacher owns the course before deleting material (security check) */
         $stmt = $pdo->prepare("SELECT m.file_path FROM materials m JOIN courses c ON m.course_id = c.id WHERE m.id = ? AND c.teacher_id = ?");
         $stmt->execute([$materialId, $user['id']]);
         $material = $stmt->fetch();
         
         if ($material) {
+            /** Delete physical file from server storage */
             if (file_exists(UPLOAD_PATH . $material['file_path'])) {
                 unlink(UPLOAD_PATH . $material['file_path']);
             }
             
+            /** Delete material record from database */
             $stmt = $pdo->prepare("DELETE FROM materials WHERE id = ?");
             $stmt->execute([$materialId]);
             setFlash('success', 'Material deleted successfully.');
         }
     } else {
+        /** Process material upload request */
         $courseId = $_POST['course_id'] ?? '';
         $title = trim($_POST['title'] ?? '');
         $description = trim($_POST['description'] ?? '');
         
+        /** Validate required fields and file upload */
         if (empty($courseId) || empty($title)) {
             setFlash('danger', 'Please fill in all required fields.');
         } elseif (!isset($_FILES['file']) || $_FILES['file']['error'] !== UPLOAD_ERR_OK) {
@@ -39,23 +47,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $file = $_FILES['file'];
             $ext = getFileExtension($file['name']);
             
+            /** Validate file size (max 10MB) */
             if ($file['size'] > getMaxFileSize()) {
                 setFlash('danger', 'File too large. Maximum size: 10MB');
             } else {
+                /** Verify teacher owns the selected course (security check) */
                 $stmt = $pdo->prepare("SELECT id FROM courses WHERE id = ? AND teacher_id = ?");
                 $stmt->execute([$courseId, $user['id']]);
                 
                 if ($stmt->fetch()) {
+                    /** Create course-specific upload directory */
                     $uploadDir = UPLOAD_PATH . 'materials/' . $courseId . '/';
                     if (!is_dir($uploadDir)) {
                         mkdir($uploadDir, 0755, true);
                     }
                     
+                    /** Generate unique filename to prevent conflicts */
                     $fileName = $file['name'];
                     $uniqueName = time() . '_' . preg_replace('/[^a-zA-Z0-9._-]/', '', $fileName);
                     $filePath = 'materials/' . $courseId . '/' . $uniqueName;
                     
+                    /** Move uploaded file to server storage */
                     if (move_uploaded_file($file['tmp_name'], UPLOAD_PATH . $filePath)) {
+                        /** Insert material record into database */
                         $stmt = $pdo->prepare("INSERT INTO materials (course_id, title, description, file_name, file_path, file_type) VALUES (?, ?, ?, ?, ?, ?)");
                         $stmt->execute([$courseId, $title, $description, $fileName, $filePath, $ext]);
                         setFlash('success', 'Material uploaded successfully!');
@@ -71,6 +85,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     exit;
 }
 
+/** Retrieve all materials uploaded to teacher's courses */
 $stmt = $pdo->prepare("
     SELECT m.*, c.course_code, c.course_name
     FROM materials m
@@ -84,7 +99,9 @@ $materials = $stmt->fetchAll();
 include '../includes/header.php';
 ?>
 
+<!-- Main container for course materials management page -->
 <div class="container my-5">
+    <!-- Page header with title and upload button -->
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2><i class="fas fa-upload text-primary <?= getLanguageDirection() === 'rtl' ? 'ms-2' : 'me-2' ?>"></i><?= __('course_materials') ?></h2>
         <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#uploadModal">
@@ -92,6 +109,7 @@ include '../includes/header.php';
         </button>
     </div>
 
+    <!-- Materials list card with download and delete actions -->
     <div class="card border-0 shadow-sm">
         <div class="card-body">
             <?php if (empty($materials)): ?>
@@ -151,7 +169,7 @@ include '../includes/header.php';
     </div>
 </div>
 
-
+<!-- Upload material modal with course selection and file upload form -->
 <div class="modal fade" id="uploadModal" tabindex="-1" aria-labelledby="uploadModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">

@@ -1,4 +1,10 @@
 <?php
+/**
+ * File Download Handler
+ * Secure file download system for assignments, submissions, and course materials
+ * Validates user permissions before allowing file access
+ */
+
 require_once '../config/config.php';
 requireLogin();
 
@@ -9,6 +15,10 @@ $id = $_GET['id'] ?? 0;
 $filePath = null;
 $fileName = null;
 
+/**
+ * Determine file path based on type and user permissions
+ * Handles: assignment files, submission files, and course materials
+ */
 switch ($type) {
     case 'assignment':
         if (hasRole('student')) {
@@ -38,6 +48,11 @@ switch ($type) {
         break;
 
     case 'submission':
+        /**
+         * Handle submission file downloads
+         * Teachers can download any submission in their courses
+         * Students can only download their own submissions
+         */
         if (hasRole('teacher')) {
             $stmt = $pdo->prepare("
                 SELECT s.file_path, s.file_name
@@ -65,6 +80,11 @@ switch ($type) {
 
     case 'material':
     default:
+        /**
+         * Handle course material downloads
+         * Teachers can download materials from their courses
+         * Students can download materials from enrolled courses
+         */
         if (hasRole('teacher')) {
             $stmt = $pdo->prepare("
                 SELECT m.file_path, m.file_name
@@ -92,6 +112,9 @@ switch ($type) {
         break;
 }
 
+/**
+ * Validate file exists and user has permission
+ */
 if (!$filePath || !$fileName) {
     http_response_code(404);
     die('File not found or access denied.');
@@ -99,21 +122,33 @@ if (!$filePath || !$fileName) {
 
 $fullPath = UPLOAD_PATH . $filePath;
 
+/**
+ * Check if file exists on server
+ */
 if (!file_exists($fullPath)) {
     http_response_code(404);
     die('File not found on server.');
 }
 
+/**
+ * Detect file MIME type and send download headers
+ */
 $finfo = finfo_open(FILEINFO_MIME_TYPE);
 $mimeType = finfo_file($finfo, $fullPath);
 finfo_close($finfo);
 
+/**
+ * Set headers for secure file download
+ */
 header('Content-Type: ' . $mimeType);
 header('Content-Disposition: attachment; filename="' . $fileName . '"');
 header('Content-Length: ' . filesize($fullPath));
 header('Cache-Control: no-cache, must-revalidate');
 header('Pragma: no-cache');
 
+/**
+ * Stream file to user
+ */
 readfile($fullPath);
 exit;
 ?>

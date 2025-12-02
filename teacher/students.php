@@ -5,6 +5,7 @@ requireApprovedTeacher();
 $pageTitle = 'Students';
 $user = getCurrentUser();
 
+/** Retrieve all students enrolled in teacher's courses with submission and quiz statistics */
 $stmt = $pdo->prepare("
     SELECT DISTINCT u.*, 
            GROUP_CONCAT(DISTINCT c.course_code ORDER BY c.course_code SEPARATOR ', ') as courses,
@@ -29,15 +30,18 @@ $students = $stmt->fetchAll();
 include '../includes/header.php';
 ?>
 
+<!-- Main container for students list page -->
 <div class="container my-5">
+    <!-- Page header with title and student count badge -->
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2>
             <i class="fas fa-user-graduate text-primary <?= getLanguageDirection() === 'rtl' ? 'ms-2' : 'me-2' ?>"></i>
-            <?= __('my_students') ?>
+            <?= __('S  tudents') ?>
         </h2>
         <span class="badge bg-primary fs-6"><?= count($students) ?> <?= __('students') ?></span>
     </div>
 
+    <!-- Students table card with enrollment details and statistics -->
     <div class="card border-0 shadow-sm">
         <div class="card-body">
             <?php if (empty($students)): ?>

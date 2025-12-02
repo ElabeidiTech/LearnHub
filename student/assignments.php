@@ -5,6 +5,7 @@ requireRole('student');
 $pageTitle = 'Assignments';
 $user = getCurrentUser();
 
+/** Retrieve all assignments from enrolled courses with submission and grade status */
 $stmt = $pdo->prepare("
     SELECT a.*, c.course_code, c.course_name,
            s.id as submission_id, s.grade, s.submitted_at, s.feedback

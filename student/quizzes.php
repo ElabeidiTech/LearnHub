@@ -5,6 +5,7 @@ requireRole('student');
 $pageTitle = 'Quizzes';
 $user = getCurrentUser();
 
+/** Retrieve all quizzes from enrolled courses with attempt statistics and best scores */
 $stmt = $pdo->prepare("
     SELECT q.*, c.course_code, c.course_name,
            (SELECT COUNT(*) FROM quiz_attempts WHERE quiz_id = q.id AND student_id = ? AND completed_at IS NOT NULL) as completed_attempts,

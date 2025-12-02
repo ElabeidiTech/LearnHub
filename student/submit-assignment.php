@@ -5,6 +5,7 @@ requireRole('student');
 $user = getCurrentUser();
 $assignmentId = $_GET['id'] ?? 0;
 
+/** Verify student is enrolled in course and retrieve assignment details */
 $stmt = $pdo->prepare("
     SELECT a.*, c.course_code, c.course_name, c.id as course_id
     FROM assignments a
@@ -15,12 +16,14 @@ $stmt = $pdo->prepare("
 $stmt->execute([$assignmentId, $user['id']]);
 $assignment = $stmt->fetch();
 
+/** Redirect if assignment not found or student not enrolled */
 if (!$assignment) {
     setFlash('danger', 'Assignment not found.');
     header('Location: assignments.php');
     exit;
 }
 
+/** Check if student has already submitted this assignment (for re-submission) */
 $stmt = $pdo->prepare("SELECT * FROM submissions WHERE assignment_id = ? AND student_id = ?");
 $stmt->execute([$assignmentId, $user['id']]);
 $existingSubmission = $stmt->fetch();
@@ -29,41 +32,51 @@ $pageTitle = 'Submit: ' . $assignment['title'];
 $error = '';
 $success = '';
 
+/** Handle submission form POST request */
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    /** Extract student comment */
     $comment = trim($_POST['comment'] ?? '');
     
     $fileName = null;
     $filePath = null;
     
+    /** Process uploaded file if provided */
     if (isset($_FILES['file']) && $_FILES['file']['error'] === UPLOAD_ERR_OK) {
         $file = $_FILES['file'];
         $ext = getFileExtension($file['name']);
         
+        /** Validate file type against allowed extensions */
         if (!in_array($ext, getAllowedTypes())) {
             $error = 'Invalid file type. Allowed: ' . implode(', ', getAllowedTypes());
         } elseif ($file['size'] > getMaxFileSize()) {
             $error = 'File too large. Maximum size: 10MB';
         } else {
+            /** Create student-specific upload directory */
             $uploadDir = UPLOAD_PATH . 'submissions/' . $user['id'] . '/';
             if (!is_dir($uploadDir)) {
                 mkdir($uploadDir, 0755, true);
             }
             
+            /** Generate unique filename to prevent conflicts */
             $fileName = $file['name'];
             $uniqueName = time() . '_' . preg_replace('/[^a-zA-Z0-9._-]/', '', $fileName);
             $filePath = 'submissions/' . $user['id'] . '/' . $uniqueName;
             
+            /** Move uploaded file to server storage */
             if (!move_uploaded_file($file['tmp_name'], UPLOAD_PATH . $filePath)) {
                 $error = 'Failed to upload file. Please try again.';
                 $filePath = null;
             }
         }
     } elseif (!$existingSubmission) {
+        /** Require file for new submissions */
         $error = 'Please upload a file.';
     }
     
     if (!$error) {
+        /** Update existing submission or create new one */
         if ($existingSubmission) {
+            /** Update submission with new file if uploaded, otherwise just update comment */
             if ($filePath) {
                 $stmt = $pdo->prepare("UPDATE submissions SET file_name = ?, file_path = ?, comment = ?, submitted_at = NOW() WHERE id = ?");
                 $stmt->execute([$fileName, $filePath, $comment, $existingSubmission['id']]);
@@ -72,10 +85,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $stmt->execute([$comment, $existingSubmission['id']]);
             }
         } else {
+            /** Create new submission record */
             $stmt = $pdo->prepare("INSERT INTO submissions (assignment_id, student_id, file_name, file_path, comment) VALUES (?, ?, ?, ?, ?)");
             $stmt->execute([$assignmentId, $user['id'], $fileName, $filePath, $comment]);
         }
         
+        /** Redirect to assignments list with success message */
         setFlash('success', 'Assignment submitted successfully!');
         header('Location: assignments.php');
         exit;
@@ -85,13 +100,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 include '../includes/header.php';
 ?>
 
+<!-- Main container for assignment submission page -->
 <div class="container my-5">
+    <!-- Back navigation link to assignments list -->
     <a href="assignments.php" class="btn btn-outline-secondary mb-3">
         <i class="fas fa-arrow-left <?= getLanguageDirection() === 'rtl' ? 'ms-1' : 'me-1' ?>"></i><?= __('back_to_assignments') ?>
     </a>
 
+    <!-- Two-column layout: assignment details (left), submission form (right) -->
     <div class="row g-4">
         
+        <!-- Left column: Assignment details card with title, description, requirements, file, and deadline info -->
         <div class="col-lg-6">
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-header bg-white border-0 py-3 d-flex justify-content-between align-items-center">
@@ -104,12 +123,14 @@ include '../includes/header.php';
                     
                     <hr>
                     
+                    <!-- Assignment instructions section -->
                     <div class="bg-light p-3 rounded mb-3">
                         <h6 class="mb-2"><?= __('instructions') ?></h6>
                         <p class="mb-0 text-pre-wrap"><?= sanitize($assignment['description']) ?></p>
                     </div>
             
             
+            <!-- Teacher's assignment file for download (if provided) -->
             <?php if (!empty($assignment['file_name']) && !empty($assignment['file_path'])): ?>
                 <div class="alert alert-info border-0">
                     <h6 class="alert-heading"><i class="fas fa-download <?= getLanguageDirection() === 'rtl' ? 'ms-1' : 'me-1' ?>"></i><?= __('assignment_file') ?></h6>
@@ -140,6 +161,7 @@ include '../includes/header.php';
                 </div>
             <?php endif; ?>
             
+            <!-- Assignment metadata: due date, points, and time remaining -->
             <div class="row g-2">
                 <div class="col-md-4">
                     <div class="bg-light p-3 rounded text-center">
@@ -170,12 +192,14 @@ include '../includes/header.php';
 </div>
 
         
+        <!-- Right column: Submission form card with file upload, comment, and submit button -->
         <div class="col-lg-6">
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-header bg-white border-0 py-3">
                     <h5 class="mb-0"><i class="fas fa-upload text-success <?= getLanguageDirection() === 'rtl' ? 'ms-2' : 'me-2' ?>"></i><?= __('submit_work') ?></h5>
                 </div>
                 <div class="card-body">
+                    <!-- Error alert for file validation failures -->
                     <?php if ($error): ?>
                         <div class="alert alert-danger">
                             <i class="fas fa-exclamation-circle <?= getLanguageDirection() === 'rtl' ? 'ms-1' : 'me-1' ?>"></i>
@@ -183,6 +207,7 @@ include '../includes/header.php';
                         </div>
                     <?php endif; ?>
 
+                    <!-- Previous submission info (if exists) showing submission date, grade, and feedback -->
                     <?php if ($existingSubmission): ?>
                         <div class="alert alert-info">
                             <i class="fas fa-info-circle <?= getLanguageDirection() === 'rtl' ? 'ms-1' : 'me-1' ?>"></i>
@@ -197,6 +222,7 @@ include '../includes/header.php';
                             <?php endif; ?>
                         </div>
                         
+                        <!-- Currently submitted file display -->
                         <?php if ($existingSubmission['file_name']): ?>
                             <div class="d-flex justify-content-between align-items-center bg-light p-3 rounded mb-3">
                                 <div class="d-flex align-items-center gap-2">
@@ -212,10 +238,12 @@ include '../includes/header.php';
                         <?php endif; ?>
                     <?php endif; ?>
 
+                    <!-- Submission form: file upload with drag-and-drop and optional comment -->
                     <?php if ($existingSubmission && $existingSubmission['grade'] !== null): ?>
                         <p class="text-muted"><?= __('cannot_resubmit_graded') ?></p>
                     <?php else: ?>
                         <form method="POST" enctype="multipart/form-data">
+                            <!-- File upload input with drag-and-drop area -->
                             <div class="mb-3">
                                 <label class="form-label"><?= __('upload_work') ?> <?= $existingSubmission ? '('.__('optional_keep_current').')' : '*' ?></label>
                                 <div class="border rounded p-4 text-center file-upload-area" onclick="document.getElementById('fileInput').click();" id="uploadArea">
@@ -245,6 +273,7 @@ include '../includes/header.php';
     </div>
 </div>
 
+<!-- Initialize drag-and-drop file upload functionality -->
 <script>
 if (typeof setupDragAndDrop === 'function') {
     setupDragAndDrop('uploadArea', 'fileInput', 'selectedFile');

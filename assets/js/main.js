@@ -1,3 +1,6 @@
+/**
+ * Initialize all functions when DOM is fully loaded
+ */
 document.addEventListener('DOMContentLoaded', function() {
     initFormValidation();
     initDateTime();
@@ -5,6 +8,10 @@ document.addEventListener('DOMContentLoaded', function() {
     cloneUniversityLogos();
 });
 
+/**
+ * Initialize form validation for all forms with .needs-validation class
+ * Also handles password strength checking and confirmation matching
+ */
 function initFormValidation() {
     const forms = document.querySelectorAll('.needs-validation');
     
@@ -40,6 +47,11 @@ function initFormValidation() {
     }
 }
 
+/**
+ * Check password strength based on various criteria
+ * @param {string} password - The password to check
+ * @return {number} Strength score from 0-5
+ */
 function checkPasswordStrength(password) {
     let strength = 0;
     
@@ -52,6 +64,11 @@ function checkPasswordStrength(password) {
     return strength;
 }
 
+/**
+ * Update the password strength indicator UI element
+ * @param {number} strength - Strength score (0-5)
+ * @param {HTMLElement} indicator - The indicator element to update
+ */
 function updateStrengthIndicator(strength, indicator) {
     const labels = ['Very Weak', 'Weak', 'Fair', 'Good', 'Strong'];
     const colors = ['#ef4444', '#f59e0b', '#eab308', '#22c55e', '#10b981'];
@@ -60,6 +77,9 @@ function updateStrengthIndicator(strength, indicator) {
     indicator.style.color = colors[strength - 1] || '#6b7280';
 }
 
+/**
+ * Initialize date and time display with real-time updates
+ */
 function initDateTime() {
     const dateElement = document.getElementById('current-date');
     const timeElement = document.getElementById('current-time');
@@ -70,6 +90,9 @@ function initDateTime() {
     }
 }
 
+/**
+ * Update the current date and time display
+ */
 function updateDateTime() {
     const now = new Date();
     const dateOptions = { 
@@ -124,6 +147,10 @@ function initCounterAnimation() {
     });
 }
 
+/**
+ * Animate a counter element from 0 to its target value
+ * @param {HTMLElement} element - The counter element with data-target attribute
+ */
 function animateCounter(element) {
     const target = parseInt(element.getAttribute('data-target'));
     const duration = 2000;
@@ -144,6 +171,9 @@ function animateCounter(element) {
     updateCounter();
 }
 
+/**
+ * Clone university logo elements to create infinite scrolling carousel effect
+ */
 function cloneUniversityLogos() {
     const track = document.querySelector('.university-logos-track');
     if (track) {
@@ -155,6 +185,12 @@ function cloneUniversityLogos() {
     }
 }
 
+/**
+ * Show a confirmation modal with custom message and callback
+ * @param {string} message - The confirmation message
+ * @param {Function} onConfirm - Callback function to execute on confirmation
+ * @param {string} title - Modal title (default: 'Confirm Action')
+ */
 function showConfirm(message, onConfirm, title = 'Confirm Action') {
     if (typeof bootstrap === 'undefined') {
         if (confirm(message)) {
@@ -198,6 +234,13 @@ function showConfirm(message, onConfirm, title = 'Confirm Action') {
     modal.show();
 }
 
+/**
+ * Show an alert modal with custom message
+ * @param {string} message - The alert message
+ * @param {Function} onOk - Optional callback function when OK is clicked
+ * @param {string} title - Modal title (default: 'Notice')
+ * @param {string} type - Alert type: info, warning, danger, success (default: 'info')
+ */
 function showAlert(message, onOk = null, title = 'Notice', type = 'info') {
     if (typeof bootstrap === 'undefined') {
         alert(message);
@@ -250,6 +293,11 @@ function showAlert(message, onOk = null, title = 'Notice', type = 'info') {
     modal.show();
 }
 
+/**
+ * Toggle password visibility for a given input field
+ * @param {string} fieldId - The ID of the password input field
+ * @param {HTMLElement} button - The toggle button element
+ */
 function togglePassword(fieldId, button) {
     const field = document.getElementById(fieldId);
     const icon = button.querySelector('i');
@@ -265,6 +313,11 @@ function togglePassword(fieldId, button) {
     }
 }
 
+/**
+ * Handle file input change event and display selected filename
+ * @param {Event} event - The change event
+ * @param {string} displayElementId - ID of element to display filename in
+ */
 function handleFileInputChange(event, displayElementId) {
     const fileInput = event.target;
     const displayElement = document.getElementById(displayElementId);
@@ -274,6 +327,12 @@ function handleFileInputChange(event, displayElementId) {
     }
 }
 
+/**
+ * Setup drag and drop file upload functionality
+ * @param {string} uploadAreaId - ID of the drag/drop area element
+ * @param {string} fileInputId - ID of the file input element
+ * @param {string} displayElementId - ID of element to display filename in
+ */
 function setupDragAndDrop(uploadAreaId, fileInputId, displayElementId) {
     const uploadArea = document.getElementById(uploadAreaId);
     const fileInput = document.getElementById(fileInputId);
@@ -300,6 +359,9 @@ function setupDragAndDrop(uploadAreaId, fileInputId, displayElementId) {
     });
 }
 
+/**
+ * Initialize profile picture upload button visibility
+ */
 function initProfilePictureUpload() {
     const profilePictureInput = document.getElementById('profilePictureInput');
     const uploadBtn = document.getElementById('uploadBtn');
@@ -313,6 +375,9 @@ function initProfilePictureUpload() {
     }
 }
 
+/**
+ * Add a new question card to the quiz creation form
+ */
 function addQuestion() {
     const container = document.getElementById('questionsContainer');
     if (!container) return;
@@ -353,6 +418,10 @@ function addQuestion() {
     updateQuestionCount();
 }
 
+/**
+ * Remove a question card from the quiz form
+ * @param {HTMLElement} btn - The remove button that was clicked
+ */
 function removeQuestion(btn) {
     btn.closest('.question-card').remove();
     
@@ -363,6 +432,9 @@ function removeQuestion(btn) {
     updateQuestionCount();
 }
 
+/**
+ * Update the question count and total points display
+ */
 function updateQuestionCount() {
     const questionCountElement = document.getElementById('questionCount');
     if (!questionCountElement) return;
@@ -380,6 +452,9 @@ function updateQuestionCount() {
     questionCountElement.textContent = `${questionCount} ${questionsText} • ${totalPoints} ${pointsText}`;
 }
 
+/**
+ * Initialize listener for points input changes to update total
+ */
 function initQuizPointsListener() {
     const container = document.getElementById('questionsContainer');
     if (!container) return;
@@ -391,6 +466,9 @@ function initQuizPointsListener() {
     });
 }
 
+/**
+ * Initialize teacher approval modal buttons and data binding
+ */
 function initTeacherApprovalModal() {
     document.querySelectorAll('.approve-teacher-btn').forEach(btn => {
         btn.addEventListener('click', function() {
@@ -412,6 +490,9 @@ function initTeacherApprovalModal() {
     });
 }
 
+/**
+ * Toggle password visibility in the login modal
+ */
 function toggleModalPassword() {
     const password = document.getElementById('password');
     const icon = document.getElementById('toggleModalIcon');
@@ -429,12 +510,18 @@ function toggleModalPassword() {
     }
 }
 
+/**
+ * Initialize additional features when DOM is loaded
+ */
 document.addEventListener('DOMContentLoaded', function() {
     initProfilePictureUpload();
     initQuizPointsListener();
     initTeacherApprovalModal();
 });
 
+/**
+ * Export functions to global window object for inline event handlers
+ */
 window.showConfirm = showConfirm;
 window.showAlert = showAlert;
 window.togglePassword = togglePassword;

@@ -5,28 +5,36 @@ requireApprovedTeacher();
 $pageTitle = 'My Courses';
 $user = getCurrentUser();
 
+/** Handle course management POST actions (create or delete) */
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
+    /** Process course creation request */
     if ($_POST['action'] === 'create') {
+        /** Extract and normalize course data - uppercase for consistency */
         $courseCode = strtoupper(trim($_POST['course_code'] ?? ''));
         $courseName = strtoupper(trim($_POST['course_name'] ?? ''));
         $description = trim($_POST['description'] ?? '');
         
+        /** Validate required fields */
         if (empty($courseCode) || empty($courseName)) {
             setFlash('danger', 'Please fill in all required fields.');
         } else {
+            /** Check if course code already exists to prevent duplicates */
             $stmt = $pdo->prepare("SELECT id FROM courses WHERE course_code = ?");
             $stmt->execute([$courseCode]);
             
             if ($stmt->fetch()) {
                 setFlash('danger', 'Course code already exists.');
             } else {
+                /** Create new course linked to current teacher */
                 $stmt = $pdo->prepare("INSERT INTO courses (teacher_id, course_code, course_name, description) VALUES (?, ?, ?, ?)");
                 $stmt->execute([$user['id'], $courseCode, $courseName, $description]);
                 setFlash('success', 'Course created successfully!');
             }
         }
     } elseif ($_POST['action'] === 'delete') {
+        /** Process course deletion request */
         $courseId = $_POST['course_id'] ?? 0;
+        /** Delete course only if it belongs to current teacher (security check) */
         $stmt = $pdo->prepare("DELETE FROM courses WHERE id = ? AND teacher_id = ?");
         $stmt->execute([$courseId, $user['id']]);
         setFlash('success', 'Course deleted successfully.');
@@ -36,6 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     exit;
 }
 
+/** Retrieve all courses for current teacher with student count, assignment count, and quiz count */
 $stmt = $pdo->prepare("
     SELECT c.*,
            (SELECT COUNT(*) FROM enrollments WHERE course_id = c.id) as student_count,
@@ -51,7 +60,9 @@ $courses = $stmt->fetchAll();
 include '../includes/header.php';
 ?>
 
+<!-- Main container for courses management page -->
 <div class="container my-5">
+    <!-- Page header with title and create course button -->
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2><i class="fas fa-book text-primary <?= getLanguageDirection() === 'rtl' ? 'ms-2' : 'me-2' ?>"></i>My Courses</h2>
         <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createModal">
@@ -59,6 +70,7 @@ include '../includes/header.php';
         </button>
     </div>
 
+    <!-- Empty state card: shown when teacher has no courses yet -->
     <?php if (empty($courses)): ?>
         <div class="card border-0 shadow-sm">
             <div class="card-body text-center py-5">
@@ -70,6 +82,7 @@ include '../includes/header.php';
             </div>
         </div>
     <?php else: ?>
+        <!-- Course cards grid: displays all courses with statistics and actions -->
         <div class="row g-4">
             <?php 
             $colors = ['#4f46e5', '#10b981', '#f59e0b', '#ef4444', '#06b6d4', '#8b5cf6'];
@@ -118,6 +131,7 @@ include '../includes/header.php';
 </div>
 
 
+<!-- Create course modal: form for creating new course with code, name, and description -->
 <div class="modal fade" id="createModal" tabindex="-1" aria-labelledby="createModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">

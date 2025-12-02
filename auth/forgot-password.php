@@ -5,26 +5,35 @@ require_once '../config/config.php';
 $error = '';
 $success = '';
 
+/** Handle password reset request form submission */
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    /** Extract and sanitize email address */
     $email = sanitize($_POST['email'] ?? '');
     
+    /** Validate email format */
     if (empty($email)) {
         $error = 'Please enter your email address.';
     } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         $error = 'Please enter a valid email address.';
     } else {
+        /** Check if user account exists with this email */
         $stmt = $pdo->prepare("SELECT id FROM users WHERE email = ?");
         $stmt->execute([$email]);
         
         if ($stmt->fetch()) {
+            /** Generate secure random token for password reset */
             $token = bin2hex(random_bytes(32));
+            /** Set token expiration to 1 hour from now */
             $expires = date('Y-m-d H:i:s', strtotime('+1 hour'));
             
+            /** Store password reset token in database */
             $stmt = $pdo->prepare("INSERT INTO password_resets (email, token, expires_at) VALUES (?, ?, ?)");
             $stmt->execute([$email, $token, $expires]);
             
+            /** Generic success message to prevent email enumeration attacks */
             $success = 'If an account with that email exists, we have sent password reset instructions.';
         } else {
+            /** Same message even if email not found (security best practice) */
             $success = 'If an account with that email exists, we have sent password reset instructions.';
         }
     }
@@ -42,8 +51,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link rel="stylesheet" href="<?= SITE_URL ?>/assets/css/style.css">
 </head>
 <body>
+    <!-- Auth Page Wrapper: Centered password reset form -->
     <div class="auth-wrapper">
         <div class="container">
+            <!-- Password Reset Card -->
             <div class="auth-card animate__animated animate__fadeIn">
                 <div class="text-center mb-4">
                     <a href="<?= SITE_URL ?>" class="logo text-decoration-none">

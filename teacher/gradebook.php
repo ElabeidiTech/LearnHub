@@ -5,9 +5,11 @@ requireApprovedTeacher();
 $pageTitle = 'Gradebook';
 $user = getCurrentUser();
 
+/** Handle submission deletion request */
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_submission'])) {
     $submissionId = (int)$_POST['submission_id'];
     
+    /** Verify teacher owns the course this submission belongs to (security check) */
     $stmt = $pdo->prepare("
         SELECT s.id FROM submissions s
         JOIN assignments a ON s.assignment_id = a.id
@@ -17,6 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_submission']))
     $stmt->execute([$submissionId, $user['id']]);
     
     if ($stmt->fetch()) {
+        /** Delete submission if authorized */
         $stmt = $pdo->prepare("DELETE FROM submissions WHERE id = ?");
         $stmt->execute([$submissionId]);
         setFlash('success', 'Submission deleted successfully.');
@@ -28,6 +31,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_submission']))
     exit;
 }
 
+/** Retrieve all submissions for courses taught by current teacher with student and assignment details */
+/** Sorted by ungraded first, then by submission date descending */
 $stmt = $pdo->prepare("
     SELECT s.*, a.title as assignment_title, a.total_points, c.course_code, c.course_name, 
            u.full_name as student_name, u.email as student_email
@@ -41,19 +46,22 @@ $stmt = $pdo->prepare("
 $stmt->execute([$user['id']]);
 $submissions = $stmt->fetchAll();
 
+/** Separate submissions into pending (not graded) and graded categories */
 $pendingSubmissions = array_filter($submissions, fn($s) => $s['grade'] === null);
 $gradedSubmissions = array_filter($submissions, fn($s) => $s['grade'] !== null);
 
 include '../includes/header.php';
 ?>
 
+<!-- Main container for gradebook page -->
 <div class="container my-5">
+    <!-- Page title with icon -->
     <h2 class="mb-4">
         <i class="fas fa-star text-warning <?= getLanguageDirection() === 'rtl' ? 'ms-2' : 'me-2' ?>"></i>
         <?= __('gradebook') ?>
     </h2>
 
-    
+    <!-- Pending submissions card: all ungraded submissions awaiting teacher review -->
     <div class="card border-0 shadow-sm mb-4">
         <div class="card-header bg-white border-0 py-3">
             <h5 class="mb-0">
@@ -121,7 +129,7 @@ include '../includes/header.php';
         </div>
     </div>
 
-    
+    <!-- Graded submissions card: all submissions that have been graded with scores -->
     <div class="card border-0 shadow-sm">
         <div class="card-header bg-white border-0 py-3">
             <h5 class="mb-0">
@@ -189,12 +197,17 @@ include '../includes/header.php';
     </div>
 </div>
 
+<!-- Hidden form for submission deletion -->
 <form id="deleteForm" method="POST" style="display: none;">
     <input type="hidden" name="delete_submission" value="1">
     <input type="hidden" name="submission_id" id="deleteSubmissionId">
 </form>
 
 <script>
+/**
+ * Confirm deletion of a submission and submit the form
+ * @param {number} submissionId - The ID of the submission to delete
+ */
 function confirmDelete(submissionId) {
     if (confirm('<?= __('Are you sure you want to delete this submission?') ?>')) {
         document.getElementById('deleteSubmissionId').value = submissionId;

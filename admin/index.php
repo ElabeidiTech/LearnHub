@@ -1,62 +1,95 @@
 <?php
+/**
+ * Admin Dashboard - Teacher Verification and Management
+ * Allows admins to approve, reject, suspend, or delete teacher accounts
+ */
+
+// Load configuration and require admin role
 require_once '../config/config.php';
 requireRole('admin');
 
+// Set page title
 $pageTitle = 'Teacher Verification';
+
+// Get current admin user data
 $user = getCurrentUser();
 
+// Handle teacher management actions (approve, reject, suspend, unsuspend, delete)
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $userId = $_POST['user_id'] ?? 0;
     $action = $_POST['action'] ?? '';
     
     if ($action === 'approve') {
+        // Approve teacher account - grant access to teacher features
         $stmt = $pdo->prepare("UPDATE users SET status = 'approved', verified_at = NOW(), verified_by = ? WHERE id = ?");
         $stmt->execute([$user['id'], $userId]);
         setFlash('success', __('teacher_approved'));
+        
     } elseif ($action === 'reject') {
+        // Reject teacher application with optional reason
         $reason = trim($_POST['reason'] ?? '');
         $stmt = $pdo->prepare("UPDATE users SET status = 'rejected' WHERE id = ?");
         $stmt->execute([$userId]);
         
+        // Update verification record with rejection details
         try {
             $stmt = $pdo->prepare("UPDATE teacher_verifications SET status = 'rejected', rejection_reason = ?, reviewed_by = ?, reviewed_at = NOW() WHERE user_id = ?");
             $stmt->execute([$reason, $user['id'], $userId]);
         } catch (PDOException $e) {
+            // Ignore if verification record doesn't exist
         }
         
         setFlash('warning', __('teacher_rejected'));
+        
     } elseif ($action === 'suspend') {
+        // Suspend teacher account - temporarily block access
         $stmt = $pdo->prepare("UPDATE users SET status = 'suspended' WHERE id = ?");
         $stmt->execute([$userId]);
         setFlash('info', 'Teacher account suspended.');
+        
     } elseif ($action === 'unsuspend') {
+        // Unsuspend teacher account - restore access
         $stmt = $pdo->prepare("UPDATE users SET status = 'approved' WHERE id = ?");
         $stmt->execute([$userId]);
         setFlash('success', 'Teacher account unsuspended and reactivated.');
+        
     } elseif ($action === 'delete') {
+        // Delete teacher account and all associated data
+        // Uses transaction to ensure all-or-nothing deletion
         $pdo->beginTransaction();
         try {
+            // Delete enrollments in teacher's courses
             $pdo->prepare("DELETE e FROM enrollments e JOIN courses c ON e.course_id = c.id WHERE c.teacher_id = ?")->execute([$userId]);
             
+            // Delete submissions for teacher's assignments
             $pdo->prepare("DELETE s FROM submissions s JOIN assignments a ON s.assignment_id = a.id JOIN courses c ON a.course_id = c.id WHERE c.teacher_id = ?")->execute([$userId]);
             
+            // Delete quiz attempts for teacher's quizzes
             $pdo->prepare("DELETE qa FROM quiz_attempts qa JOIN quizzes q ON qa.quiz_id = q.id JOIN courses c ON q.course_id = c.id WHERE c.teacher_id = ?")->execute([$userId]);
             
+            // Delete teacher's assignments
             $pdo->prepare("DELETE a FROM assignments a JOIN courses c ON a.course_id = c.id WHERE c.teacher_id = ?")->execute([$userId]);
             
+            // Delete teacher's quizzes
             $pdo->prepare("DELETE q FROM quizzes q JOIN courses c ON q.course_id = c.id WHERE c.teacher_id = ?")->execute([$userId]);
             
+            // Delete teacher's course materials
             $pdo->prepare("DELETE m FROM materials m JOIN courses c ON m.course_id = c.id WHERE c.teacher_id = ?")->execute([$userId]);
             
+            // Delete teacher's courses
             $pdo->prepare("DELETE FROM courses WHERE teacher_id = ?")->execute([$userId]);
             
+            // Delete teacher verification records
             $pdo->prepare("DELETE FROM teacher_verifications WHERE user_id = ?")->execute([$userId]);
             
+            // Finally, delete the teacher user account
             $pdo->prepare("DELETE FROM users WHERE id = ?")->execute([$userId]);
             
+            // Commit transaction if all deletions successful
             $pdo->commit();
             setFlash('success', 'Teacher account deleted successfully.');
         } catch (Exception $e) {
+            // Rollback transaction on error
             $pdo->rollBack();
             setFlash('danger', 'Error deleting teacher account.');
         }

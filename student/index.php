@@ -1,29 +1,45 @@
 <?php
+/**
+ * Student Dashboard - Main page for student users
+ * Displays enrolled courses, statistics, and course enrollment functionality
+ */
+
+// Load configuration and require student role
 require_once '../config/config.php';
 requireRole('student');
 
+// Set page title
 $pageTitle = 'Dashboard';
+
+// Get current user data
 $user = getCurrentUser();
 
+// Handle course enrollment form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['course_code'])) {
     $courseCode = trim($_POST['course_code']);
     
+    // Validate course code is provided
     if (empty($courseCode)) {
         setFlash('danger', 'Please enter a course code.');
     } else {
+        // Check if course exists with provided code
         $stmt = $pdo->prepare("SELECT id FROM courses WHERE course_code = ?");
         $stmt->execute([$courseCode]);
         $course = $stmt->fetch();
         
         if (!$course) {
+            // Course not found
             setFlash('danger', 'Course not found. Please check the course code and try again.');
         } else {
+            // Check if student is already enrolled
             $stmt = $pdo->prepare("SELECT id FROM enrollments WHERE student_id = ? AND course_id = ?");
             $stmt->execute([$user['id'], $course['id']]);
             
             if ($stmt->fetch()) {
+                // Already enrolled
                 setFlash('warning', 'You are already enrolled in this course.');
             } else {
+                // Enroll student in course
                 $stmt = $pdo->prepare("INSERT INTO enrollments (student_id, course_id) VALUES (?, ?)");
                 $stmt->execute([$user['id'], $course['id']]);
                 setFlash('success', 'Successfully enrolled in the course!');
@@ -31,14 +47,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['course_code'])) {
         }
     }
     
+    // Redirect to refresh page and show flash message
     header('Location: index.php');
     exit;
 }
 
+// Get total number of enrolled courses
 $stmt = $pdo->prepare("SELECT COUNT(*) FROM enrollments WHERE student_id = ?");
 $stmt->execute([$user['id']]);
 $coursesCount = $stmt->fetchColumn();
 
+// Get count of pending assignments (not yet submitted, not overdue)
 $stmt = $pdo->prepare("
     SELECT COUNT(DISTINCT a.id) 
     FROM assignments a 
@@ -49,6 +68,7 @@ $stmt = $pdo->prepare("
 $stmt->execute([$user['id'], $user['id']]);
 $pendingAssignments = $stmt->fetchColumn();
 
+// Get count of upcoming quizzes (not yet taken, not overdue)
 $stmt = $pdo->prepare("
     SELECT COUNT(DISTINCT q.id)
     FROM quizzes q
@@ -58,6 +78,7 @@ $stmt = $pdo->prepare("
 $stmt->execute([$user['id']]);
 $upcomingQuizzesCount = $stmt->fetchColumn();
 
+// Get all enrolled courses with teacher info and content counts
 $stmt = $pdo->prepare("
     SELECT c.*, u.full_name as teacher_name,
            (SELECT COUNT(*) FROM assignments WHERE course_id = c.id) as assignment_count,
@@ -72,13 +93,16 @@ $stmt = $pdo->prepare("
 $stmt->execute([$user['id']]);
 $courses = $stmt->fetchAll();
 
+// Include header with navigation
 include '../includes/header.php';
 ?>
 
+<!-- Main container for student dashboard -->
 <div class="container my-5">
+    <!-- Welcome message with student name -->
     <h2 class="mb-4"><?= __('welcome') ?>, <?= sanitize($user['full_name']) ?>!</h2>
 
-    
+    <!-- Statistics cards showing enrolled courses, pending assignments, and upcoming quizzes -->
     <div class="row g-4 mb-4">
         <div class="col-md-3">
             <div class="card text-center h-100 border-0 shadow-sm">
@@ -115,7 +139,7 @@ include '../includes/header.php';
         </div>
     </div>
 
-    
+    <!-- Enrolled courses card with course grid layout -->
     <div class="card border-0 shadow-sm">
         <div class="card-header bg-white border-0 py-3">
             <div class="d-flex justify-content-between align-items-center">
@@ -168,6 +192,7 @@ include '../includes/header.php';
     </div>
 </div>
 
+<!-- Course enrollment modal for joining new courses by code -->
 <div class="modal fade" id="enrollModal" tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content">

@@ -1,32 +1,52 @@
 <?php
+/**
+ * Login Page - User authentication
+ * Handles user login for students, teachers, and admins
+ */
+
+// Set page title
 $pageTitle = 'Login';
+
+// Load configuration and helper functions
 require_once '../config/config.php';
 
+// Redirect if already logged in based on user role
 if (isLoggedIn()) {
     redirect('/' . $_SESSION['user_role'] . '/');
 }
 
+// Initialize error message variable
 $error = '';
 
+// Process login form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Sanitize and retrieve form data
     $email = sanitize($_POST['email'] ?? '');
     $password = $_POST['password'] ?? '';
     
+    // Validate required fields
     if (empty($email) || empty($password)) {
         $error = 'Please fill in all fields.';
     } else {
+        // Query database for user with provided email
         $stmt = $pdo->prepare("SELECT * FROM users WHERE email = ?");
         $stmt->execute([$email]);
         $user = $stmt->fetch();
         
+        // Verify user exists and password is correct
         if ($user && password_verify($password, $user['password'])) {
+            // Set session variables for authenticated user
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['user_role'] = $user['role'];
             $_SESSION['user_name'] = $user['full_name'];
             
+            // Set welcome flash message
             $_SESSION['flash_success'] = 'Welcome back, ' . $user['full_name'] . '!';
+            
+            // Redirect to role-specific dashboard
             redirect('/' . $user['role'] . '/');
         } else {
+            // Invalid credentials
             $error = 'Invalid email or password.';
         }
     }
@@ -54,6 +74,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link rel="stylesheet" href="<?= SITE_URL ?>/assets/css/style.css">
 </head>
 <body>
+    <!-- Auth Page Wrapper: Centered login form container -->
     <div class="auth-wrapper">
         <div class="container">
             <div class="auth-card">
